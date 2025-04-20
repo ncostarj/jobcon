@@ -1,0 +1,14 @@
+id;migration;batch
+1;2014_10_12_000000_create_users_table;1
+2;2014_10_12_100000_create_password_resets_table;1
+3;2019_08_19_000000_create_failed_jobs_table;1
+4;2019_12_14_000001_create_personal_access_tokens_table;1
+5;2024_07_17_223910_create_roles_table;1
+6;2024_07_17_233620_create_ferias_table;1
+7;2024_07_18_145904_create_pontos_table;1
+8;2024_10_09_163709_create_horarios_table;1
+9;2024_10_23_004855_create_frequencias_table;1
+10;2024_10_23_112059_create_empresas_table;1
+11;2024_10_23_112356_create_bancos_table;1
+12;2024_10_23_112649_create_contracheques_table;1
+13;2025_02_17_093055_create_escalas_table;1
