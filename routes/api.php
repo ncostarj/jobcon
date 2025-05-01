@@ -39,6 +39,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 			Route::name('listar_semana_atual')->get('/listar_semana_atual', function(Request $request, CalendarioService $calendarioService) {
 				return $calendarioService->getCurrentWeek($request->all());
 			});
+
+			Route::name('listar_feriados')->get('/listar_feriados', function(Request $request, CalendarioService $calendarioService) {
+				return $calendarioService->getFeriados();
+			});
 		});
 
 		Route::prefix('pontos')->name('pontos.')->group(function () {

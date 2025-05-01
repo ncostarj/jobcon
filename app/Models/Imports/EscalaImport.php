@@ -4,6 +4,7 @@ namespace App\Models\Imports;
 
 use Maatwebsite\Excel\Concerns\ToArray;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 
 class EscalaImport implements ToArray
 {

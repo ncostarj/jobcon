@@ -14,10 +14,8 @@ class EscalaRepository
 	}
 
 	public function get(array $data = []) {
-		// $mes = date('m');
-		return $this->model::with('usuario')
-			// ->whereRaw('MONTH(dia) = ?', [ $mes ])
-			->orderBy('dia','asc')
+		return $this->model::query()
+			->with('integrantes')
 			->get();
 	}
 }

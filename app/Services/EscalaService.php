@@ -17,6 +17,6 @@ class EscalaService extends BaseService
 
 	public function search($data = [])
 	{
-		return $this->defaultReponse(200, 'Dados Retornados com sucesso',(new EscalaResource($this->repository->get($data)->toArray()))->toArray());
+		return $this->defaultReponse(200, 'Dados Retornados com sucesso',(new EscalaResource($this->repository->get($data)))->toArray());
 	}
 }

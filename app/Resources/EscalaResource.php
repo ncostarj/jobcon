@@ -3,8 +3,6 @@
 namespace App\Resources;
 
 use App\Models\Common\MyCalendar;
-use App\Models\User;
-use Illuminate\Support\Facades\Log;
 
 class EscalaResource
 {
@@ -18,31 +16,57 @@ class EscalaResource
 		$this->resources = $resources;
 	}
 
+	private function getEscalacao($escalados)
+	{
+		return array_map(function ($escalado) {
+			return $escalado['nome'];
+		}, $escalados->toArray());
+	}
+
 	public function toObject($resource)
 	{
-		$dia = strtotime($resource['dia']);
 		return (object) [
 			'id' => $resource['id'],
-			'dia' => $resource['dia'],
-			'dia_formatado' => date('d/m/Y', $dia),
-			'dia_semana' => $this->calendar->getDiaSemana(date('N', $dia)),
-			'usuario' => $resource['usuario'],
+			'dia' => $resource['dia']->format('Y-m-d'),
+			'mes' => $resource['dia']->format('m'),
+			'dia_formatado' => $resource['dia']->format('d/m/Y'),
+			'dia_semana' => $this->calendar->getDiaSemana($resource['dia']->format('N')),
+			'dia_equipe' => $resource['dia_equipe'],
+			'time' => $resource['equipe'],
+			'escalacao' => $this->getEscalacao($resource['integrantes'])
 		];
 	}
 
-	public function toArray() {
-		$today =  date('Y-m-d');
-		$data = [];
-		foreach($this->resources as $resource) {
-			$resource = $this->toObject($resource);
-			$date = date('Y-m-d', strtotime($resource->dia));
-			if($date < $today) {
-				continue;
-			}
-			$month = date('m', strtotime($resource->dia));
-			$data[$month]['mes']= $this->calendar->getMes($month);
-			$data[$month]['dias'][] = $resource;
+	public function toArray()
+	{
+
+		$escalas = [];
+
+		$inicio = date('Y-m-d', strtotime('monday this week'));
+		$fim = date('Y-m-d', strtotime('friday this week'));
+
+		logger([ $inicio, $fim ]);
+
+		foreach ($this->resources as $resource) {
+			$escalas[] = $this->toObject($resource);
 		}
+
+		usort($escalas, function ($a, $b) {
+			return $a->dia <=> $b->dia;
+		});
+
+		foreach ($escalas as $item) {
+			usort($item->escalacao, function ($a, $b) {
+				return $a <=> $b;
+			});
+		}
+
+		foreach ($escalas as $escala) {
+			if($escala->dia >= $inicio && $escala->dia <= $fim) {
+				$data[] = $escala;
+			}
+		}
+
 		return $data;
 	}
 }

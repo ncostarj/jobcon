@@ -25,22 +25,70 @@ class MyCalendar
 		$this->diaPagamento = strtotime('+ 24 days', $this->primeiroDiaMes);
 		$this->ultimoDiaMes = strtotime('last day of this month');
 		$this->feriados = [
-			"01/01/2025" => "Ano Novo",
-			"03/03/2025" => "Segunda de Carnaval",
-			"04/03/2025" => "Terça de Carnaval",
-			"05/03/2025" => "Quarta-feira de Cinzas (ponto facultativo até as 14h)",
-			"18/04/2025" => "Sexta-feira Santa",
-			"21/04/2025" => "Tiradentes",
-			"01/04/2025" => "do Trabalhador",
-			"19/06/2025" => "Corpus Christi",
-			"07/09/2025" => "Independência do Brasil",
-			"12/10/2025" => "Nossa Senhora Aparecida",
-			"02/11/2025" => "Finados",
-			"15/11/2025" => "Proclamação da República",
-			"20/11/2025" => "da Consciência Negra",
-			"24/12/2025" => "Véspera de Natal (ponto facultativo após as 14h)",
-			"25/12/2025" => "Natal",
-			"31/12/2025" => "Véspera de Ano Novo (ponto facultativo após as 14h)",
+			[
+				"dia" =>"01/01/2025",
+				"nome" => "Ano Novo"
+			],
+			[
+				"dia" =>"03/03/2025",
+				"nome" => "Segunda de Carnaval"
+			],
+			[
+				"dia" =>"04/03/2025",
+				"nome" => "Terça de Carnaval"
+			],
+			[
+				"dia" =>"05/03/2025",
+				"nome" => "Quarta-feira de Cinzas (ponto facultativo até as 14h)"
+			],
+			[
+				"dia" =>"18/04/2025",
+				"nome" => "Sexta-feira Santa"
+			],
+			[
+				"dia" =>"21/04/2025",
+				"nome" => "Tiradentes"
+			],
+			[
+				"dia" =>"01/04/2025",
+				"nome" => "do Trabalhador"
+			],
+			[
+				"dia" =>"19/06/2025",
+				"nome" => "Corpus Christi"
+			],
+			[
+				"dia" =>"07/09/2025",
+				"nome" => "Independência do Brasil"
+			],
+			[
+				"dia" =>"12/10/2025",
+				"nome" => "Nossa Senhora Aparecida"
+			],
+			[
+				"dia" =>"02/11/2025",
+				"nome" => "Finados"
+			],
+			[
+				"dia" =>"15/11/2025",
+				"nome" => "Proclamação da República"
+			],
+			[
+				"dia" =>"20/11/2025",
+				"nome" => "da Consciência Negra"
+			],
+			[
+				"dia" =>"24/12/2025",
+				"nome" => "Véspera de Natal (ponto facultativo após as 14h)"
+			],
+			[
+				"dia" =>"25/12/2025",
+				"nome" => "Natal"
+			],
+			[
+				"dia" =>"31/12/2025",
+				"nome" => "Véspera de Ano Novo (ponto facultativo após as 14h)"
+			],
 		];
 	}
 
@@ -203,5 +251,9 @@ class MyCalendar
 		$data_inicio = date('Y-m-d', strtotime("monday {$periodo} week"));
 		$data_fim = date('Y-m-d', strtotime("friday {$periodo} week"));
 		return compact('data_inicio', 'data_fim');
+	}
+
+	public function getFeriados() {
+		return $this->feriados;
 	}
 }

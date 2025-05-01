@@ -9,24 +9,22 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 
-class Escala extends Model
+class EscalaIntegrante extends Model
 {
 	use Uuid, HasFactory, SoftDeletes;
 
-	protected $table = 'escalas';
+	protected $table = 'escalas_integrantes';
 
 	protected $fillable = [
-		'dia',
-		'qtd_do_dia',
-		'dia_equipe',
-		'equipe'
+		'nome'
 	];
 
-	protected $casts = [
-		'dia' => 'date:Y-m-d',
-	];
+	public function escala() {
+		return $this->belongsTo(Escala::class, 'escala_id');
+	}
 
-	public function integrantes() {
-		return $this->hasMany(EscalaIntegrante::class,'escala_id');
+	public function usuario()
+	{
+		return $this->belongsTo(User::class, 'user_id');
 	}
 }

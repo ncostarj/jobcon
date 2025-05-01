@@ -176,14 +176,26 @@
 			gateway: new Gateway(),
 			showModal: false,
 			usuarioId: usuario.id,
+			feriados: [],
 			escalas: [],
 			escalaLoading: false
 		},
 		methods: {
+			// listaFeriados: function() {
+			// 	this.gateway
+			// 		.get(`{{ route('api.v1.jobs.calendario.listar_feriados') }}`)
+			// 		.then((response) => {
+			// 			this.feriados = response.data;
+			// 			console.log(this.feriados);
+			// 		}).catch(error => {
+			// 			console.log(error);
+			// 		});
+			// },
 			listarEscalas: function() {
 				this.gateway
 					.get(`{{ route('api.v1.jobs.escalas.listar') }}`)
 					.then((response) => {
+						// let feriados = this.listaFeriados();
 						this.escalas = response.data;
 					}).catch(error => {
 						console.log(error);
@@ -423,7 +435,8 @@
 			qtdTarefas: 0,
 			tarefa: null,
 			semana: {},
-			listaTeste:[],
+			feriados: [],
+			listaTeste: [],
 			listaSprints: [],
 			sprintAtiva: {},
 			listaTarefas: [],
@@ -520,7 +533,7 @@
 					tarefa.worklogs.forEach((worklog) => {
 						let worklogDiaIndex = this.worklogsPorSemana.findIndex((worklogPorSemana) => worklogPorSemana.dia == worklog.iniciado_em_formatado && (worklog.autor.email == usuario.email || worklog.autor.email == usuario.email_comercial || worklog.autor.email == this.tarefaForm.usuario || worklog.autor.id == this.tarefaForm.usuario));
 						if (worklogDiaIndex != -1) {
-							if(!tarefasSemana.find((t) => t.key == worklog.tarefa.key)) {
+							if (!tarefasSemana.find((t) => t.key == worklog.tarefa.key)) {
 								this.qtdTarefas++;
 								tarefasSemana.push(tarefa);
 							}
@@ -532,11 +545,6 @@
 
 				this.listaTarefas = tarefasSemana;
 
-				this.listaTarefas.forEach((tarefa) => {
-
-				});
-
-
 				let totalEmSegundos = 0;
 				this.worklogsPorSemana.forEach((worklog, i) => {
 					this.totalPorSemanaEmSegundos += worklog.totalEmSegundos;
@@ -545,9 +553,19 @@
 
 				this.totalPorSemanaEmHoras = this.getTime(this.totalPorSemanaEmSegundos);
 			},
+			listaFeriados: function() {
+				this.gateway
+					.get(`{{ route('api.v1.jobs.calendario.listar_feriados') }}`)
+					.then((response) => {
+						this.feriados = response.data;
+					}).catch(error => {
+						console.log(error);
+					});
+			},
 			buscarTarefas: function() {
 				this.tarefaLoading = true;
 				this.listarSemanaAtual();
+				this.feriados = this.listaFeriados()
 				this.gateway
 					.get(`{{ route('api.v1.jobs.tarefas.buscar') }}?projects=${this.tarefaForm.projeto}&data_inicio=${this.semana.data_inicio}&data_fim=${this.semana.data_fim}&usuario=${this.tarefaForm.usuario}&status=${this.tarefaForm.status}`)
 					.then((response) => {
@@ -599,7 +617,9 @@
 							.replace(/([0-9]{4})-([0-9]{2})-([0-9]{2})/, '$3/$2/$1');
 
 						this.worklogsPorSemana = [];
-						this.totalPorSemanaEmSegundos = 0;
+						this.totalPorSemanaEmSegundos = 0;;
+
+
 
 						do {
 							let dmY = data.toISOString()
@@ -611,6 +631,7 @@
 							this.worklogsPorSemana.push({
 								dia: dmY,
 								diaIsToday: dmY == dataAtual,
+								diaIsHoliday: false,
 								diaSemana: this.getDayOfWeek(data.getDay()),
 								worklogs: [],
 								totalEmSegundos: 0,
@@ -785,12 +806,28 @@
 		<div class="card" id="escala-app">
 			<div class="card-body">
 				<h1 class="card-title"><i class="bi bi-list-task"></i> Escala</h1>
-				<ul class="nav nav-tabs">
+
+				<div class="row mb-4">
+					<div class="col" v-for="escala in escalas">
+						<h6>@{{ escala.dia_formatado }} @{{ escala.dia_semana }}</h6>
+						<ul class="list-group">
+							<li class="list-group-item d-flex justify-content-between align-items-start">
+								@{{ escala.dia_equipe ? 'Dia ' + dia.time : 'Escalados:' }}
+								<span class="badge rounded-pill bg-primary">@{{ escala.escalacao.length }}</span>
+							</li>
+							<li class="list-group-item" v-for="escalado in escala.escalacao">
+								@{{ escalado }}
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<!-- <ul class="nav nav-tabs">
 					<li class="nav-item" v-for="escala in escalas">
 						<a class="nav-link active" aria-current="page" href="#">@{{ escala.mes }}</a>
 						<p v-for="dia in escala.dias">@{{ dia.dia_formatado }} (@{{ dia.dia_semana }})</p>
 					</li>
-				</ul>
+				</ul> -->
 			</div>
 		</div>
 	</div>
@@ -1099,7 +1136,8 @@
 						</tr>
 						<tr v-if="!tarefaLoading" v-for="tarefa in filteredItems">
 							<td>
-							<a :href="'https://otjira.atlassian.net/browse/'+tarefa.key" target="_blank">@{{ tarefa.key }}</a></td>
+								<a :href="'https://otjira.atlassian.net/browse/'+tarefa.key" target="_blank">@{{ tarefa.key }}</a>
+							</td>
 							<td>
 								<img v-if="tarefa.prioridade" :src="tarefa.prioridade.icone" width="32" height="32" :title="'Prioridade: '+tarefa.prioridade.nome" />
 								<img v-if="tarefa.tipo" :src="tarefa.tipo.icone" width="32" height="32" :title="'Tipo: '+tarefa.tipo.nome" />

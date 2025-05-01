@@ -15,9 +15,10 @@ class CreateEscalasTable extends Migration
     {
         Schema::create('escalas', function (Blueprint $table) {
 			$table->uuid('id')->primary();
-			$table->foreignUuid('user_id')->constrained('users', 'id');
 			$table->date('dia');
-			$table->boolean('equipe');
+			$table->boolean('dia_equipe');
+			$table->string('equipe')->nullable();
+			$table->integer('qtd_do_dia');
             $table->timestamps();
 			$table->softDeletes();
         });

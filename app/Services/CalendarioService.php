@@ -20,4 +20,8 @@ class CalendarioService extends BaseService
 	public function getCurrentWeek($dados) {
 		return $this->defaultReponse(200,'Dados retornados com sucesso',$this->myCalendar->getCurWeekInterval($dados));
 	}
+
+	public function getFeriados() {
+		return $this->defaultReponse(200,'Dados retornados com sucesso',$this->myCalendar->getFeriados());
+	}
 }
