@@ -24,7 +24,7 @@ class UsuarioResource
 
 		$list = [];
 		foreach ($resources as $resource) {
-			if ($resource->accountType != 'atlassian' || $resource->active == false) {
+			if (!isset($resource->accountType) || $resource->accountType != 'atlassian' || $resource->active == false) {
 				continue;
 			}
 			$list[] = [

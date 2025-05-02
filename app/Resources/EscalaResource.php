@@ -45,8 +45,6 @@ class EscalaResource
 		$inicio = date('Y-m-d', strtotime('monday this week'));
 		$fim = date('Y-m-d', strtotime('friday this week'));
 
-		logger([ $inicio, $fim ]);
-
 		foreach ($this->resources as $resource) {
 			$escalas[] = $this->toObject($resource);
 		}

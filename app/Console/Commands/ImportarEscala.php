@@ -44,7 +44,8 @@ class ImportarEscala extends Command
     public function handle()
     {
 		$sheet = Excel::toArray(new EscalaImport, public_path('xls/escala_fintools.xlsx'));
-		$hoje = date('Y-m-d', strtotime('now'));
+		// $hoje = date('Y-m-d', strtotime('now'));
+		$hoje = '2025-04-28';
 
 		$header1 = $sheet[0][0];
 		$header2 = $sheet[0][1];
