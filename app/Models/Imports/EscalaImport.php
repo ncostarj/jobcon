@@ -4,25 +4,24 @@ namespace App\Models\Imports;
 
 use Maatwebsite\Excel\Concerns\ToArray;
 use Illuminate\Support\Facades\Log;
+<<<<<<< Updated upstream
 use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 
+=======
+use Maatwebsite\Excel\Concerns\WithStartRow;
+>>>>>>> Stashed changes
 class EscalaImport implements ToArray
 {
-    // /**
-    //  * @param array $row
-    //  *
-    //  * @return User|null
-    //  */
-    // public function model(array $row)
+
+	// public function startRow(): int
     // {
-    //     return new User([
-    //        'name'     => $row[0],
-    //        'email'    => $row[1],
-    //        'password' => Hash::make($row[2]),
-    //     ]);
-    // }
+    //     return 3;
+	// }
 
 	public function array(array $row) {
 		return $row;
+		// return [
+		// 	'a'=>1
+		// ];
 	}
 }

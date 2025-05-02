@@ -44,6 +44,7 @@ class ImportarEscala extends Command
     public function handle()
     {
 		$sheet = Excel::toArray(new EscalaImport, public_path('xls/escala_fintools.xlsx'));
+<<<<<<< Updated upstream
 		$hoje = date('Y-m-d', strtotime('now'));
 
 		$header1 = $sheet[0][0];
@@ -163,5 +164,43 @@ class ImportarEscala extends Command
 
 		$this->info("Escala importada com sucesso");
         // return 0;
+=======
+		$header = [];
+		$lines = [];
+
+		foreach($sheet[0] as $i => $row) {
+			// $array[] = $row;
+
+			if($i < 2) {
+				$header[] = $row;
+				continue;
+			}
+
+			$qtdNull = 0;
+			$qtdColunas = count($row);
+			foreach($row as $j => $column) {
+				$c = trim($column);
+				$row[$j] = in_array($c, ['Time','Total do dia']) ? '' : $c;
+				// if(empty($row[$j])) {
+				// 	unset($row[$j]);
+				// }
+				if(is_null($column)) { $qtdNull++; }
+
+				if(is_numeric($column)) {
+					$row[$j] = Date::excelToDateTimeObject($column)->format('Y-m-d');
+				}
+			}
+
+			if($qtdNull == $qtdColunas) {
+				continue;
+			}
+
+			dump(implode('|',$row)."\n");
+			// dump($row);
+
+			if($i == 7){ break;}
+		}
+
+>>>>>>> Stashed changes
     }
 }
