@@ -50,8 +50,12 @@ class MyCalendar
 				"nome" => "Tiradentes"
 			],
 			[
-				"dia" =>"01/04/2025",
-				"nome" => "do Trabalhador"
+				"dia" =>"23/04/2025",
+				"nome" => "São Jorge"
+			],
+			[
+				"dia" =>"01/05/2025",
+				"nome" => "Dia do Trabalhador"
 			],
 			[
 				"dia" =>"19/06/2025",
@@ -96,19 +100,24 @@ class MyCalendar
 	{
 		$qtdDiasUteis = 0;
 
-		$hoje = strtotime('now');
-
-		if($data == $hoje) {
-			$data = strtotime('+ 1 day', $data);
-		}
-
 		for ($i = 0; $i <= $qtdDias; $i++) {
+
 			$diaSemana = date('N', $data);
-			if(!in_array($diaSemana,[ 6, 7 ]) && !in_array(date('d/m/Y', $data), array_keys($this->feriados))) {
-				$qtdDiasUteis++;
+
+			$feriado = array_filter($this->feriados, function($feriado) use ($data) {
+				return $feriado['dia'] == date('d/m/Y', $data);
+			});
+
+			if(in_array($diaSemana,[ 6, 7 ]) || !empty($feriado)) {
+				$data = strtotime('+ 1 day', $data);
+				continue;
 			}
+
+			$qtdDiasUteis++;
+
 			$data = strtotime('+ 1 day', $data);
 		}
+
 		return $qtdDiasUteis;
 	}
 

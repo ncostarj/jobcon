@@ -176,26 +176,16 @@
 			gateway: new Gateway(),
 			showModal: false,
 			usuarioId: usuario.id,
+			usuarioNome: usuario.name,
 			feriados: [],
 			escalas: [],
 			escalaLoading: false
 		},
 		methods: {
-			// listaFeriados: function() {
-			// 	this.gateway
-			// 		.get(`{{ route('api.v1.jobs.calendario.listar_feriados') }}`)
-			// 		.then((response) => {
-			// 			this.feriados = response.data;
-			// 			console.log(this.feriados);
-			// 		}).catch(error => {
-			// 			console.log(error);
-			// 		});
-			// },
 			listarEscalas: function() {
 				this.gateway
 					.get(`{{ route('api.v1.jobs.escalas.listar') }}`)
 					.then((response) => {
-						// let feriados = this.listaFeriados();
 						this.escalas = response.data;
 					}).catch(error => {
 						console.log(error);
@@ -553,7 +543,7 @@
 
 				this.totalPorSemanaEmHoras = this.getTime(this.totalPorSemanaEmSegundos);
 			},
-			listaFeriados: function() {
+			listarFeriados: function() {
 				this.gateway
 					.get(`{{ route('api.v1.jobs.calendario.listar_feriados') }}`)
 					.then((response) => {
@@ -565,7 +555,6 @@
 			buscarTarefas: function() {
 				this.tarefaLoading = true;
 				this.listarSemanaAtual();
-				this.feriados = this.listaFeriados()
 				this.gateway
 					.get(`{{ route('api.v1.jobs.tarefas.buscar') }}?projects=${this.tarefaForm.projeto}&data_inicio=${this.semana.data_inicio}&data_fim=${this.semana.data_fim}&usuario=${this.tarefaForm.usuario}&status=${this.tarefaForm.status}`)
 					.then((response) => {
@@ -605,6 +594,7 @@
 			},
 			listarSemanaAtual: function() {
 				this.tarefaForm.periodo = this.tarefaForm.periodo ?? 'this';
+
 				this.gateway
 					.get(`{{ route('api.v1.jobs.calendario.listar_semana_atual') }}?periodo=${this.tarefaForm.periodo}`)
 					.then((response) => {
@@ -617,9 +607,7 @@
 							.replace(/([0-9]{4})-([0-9]{2})-([0-9]{2})/, '$3/$2/$1');
 
 						this.worklogsPorSemana = [];
-						this.totalPorSemanaEmSegundos = 0;;
-
-
+						this.totalPorSemanaEmSegundos = 0;
 
 						do {
 							let dmY = data.toISOString()
@@ -628,10 +616,14 @@
 
 							data.setDate(data.getDate() + 1);
 
+							let feriado = this.feriados.find((f) => f.dia == dmY);
+							let isFeriado = feriado ? true : false;
+
 							this.worklogsPorSemana.push({
 								dia: dmY,
 								diaIsToday: dmY == dataAtual,
-								diaIsHoliday: false,
+								diaIsHoliday: isFeriado,
+								feriado: isFeriado ? feriado.nome : '',
 								diaSemana: this.getDayOfWeek(data.getDay()),
 								worklogs: [],
 								totalEmSegundos: 0,
@@ -683,6 +675,7 @@
 			}
 		},
 		created: function() {
+			this.listarFeriados();
 			this.listarSemanaAtual();
 			this.listarProjetos();
 			this.listarUsuarios();
@@ -787,22 +780,6 @@
 
 <div class="row">
 	<div class="col">
-		<div class="card">
-			<div class="card-body">
-				<h1 class="card-title"><i class="bi bi-spotify"></i> Spotify</h1>
-				<a href="{{ route('spotify.index') }}">Authorize</a>
-				<a href="{{ route('spotify.profile', [ 'code' => $dados->filtro['code']??'' ]) }}">Perfil</a>
-				<h4><small>Ouvindo agora</small></h4>
-				<!-- <a href="#" title="Anterior"><i class="bi bi-skip-backward-fill fs-2"></i></a>
-									<a href="#" title="Tocar"><i class="bi bi-play-fill fs-2"></i></i></a>
-									<a href="#" title="Pausar"><i class="bi bi-pause-fill fs-2"></i></a>
-									<a href="#" title="Próxima"><i class="bi bi-skip-forward-fill fs-2"></i></a> -->
-			</div>
-		</div>
-	</div>
-</div>
-<div class="row mt-4">
-	<div class="col-6">
 		<div class="card" id="escala-app">
 			<div class="card-body">
 				<h1 class="card-title"><i class="bi bi-list-task"></i> Escala</h1>
@@ -815,19 +792,30 @@
 								@{{ escala.dia_equipe ? 'Dia ' + dia.time : 'Escalados:' }}
 								<span class="badge rounded-pill bg-primary">@{{ escala.escalacao.length }}</span>
 							</li>
-							<li class="list-group-item" v-for="escalado in escala.escalacao">
+							<li class="list-group-item" :class="[ usuarioNome.includes(escalado) ? 'bg-secondary' : '' ]" v-for="escalado in escala.escalacao">
 								@{{ escalado }}
 							</li>
 						</ul>
 					</div>
 				</div>
 
-				<!-- <ul class="nav nav-tabs">
-					<li class="nav-item" v-for="escala in escalas">
-						<a class="nav-link active" aria-current="page" href="#">@{{ escala.mes }}</a>
-						<p v-for="dia in escala.dias">@{{ dia.dia_formatado }} (@{{ dia.dia_semana }})</p>
-					</li>
-				</ul> -->
+			</div>
+		</div>
+
+	</div>
+</div>
+<div class="row mt-4">
+	<div class="col-6">
+		<div class="card">
+			<div class="card-body">
+				<h1 class="card-title"><i class="bi bi-spotify"></i> Spotify</h1>
+				<a href="{{ route('spotify.index') }}">Authorize</a>
+				<a href="{{ route('spotify.profile', [ 'code' => $dados->filtro['code']??'' ]) }}">Perfil</a>
+				<h4><small>Ouvindo agora</small></h4>
+				<!-- <a href="#" title="Anterior"><i class="bi bi-skip-backward-fill fs-2"></i></a>
+									<a href="#" title="Tocar"><i class="bi bi-play-fill fs-2"></i></i></a>
+									<a href="#" title="Pausar"><i class="bi bi-pause-fill fs-2"></i></a>
+									<a href="#" title="Próxima"><i class="bi bi-skip-forward-fill fs-2"></i></a> -->
 			</div>
 		</div>
 	</div>
@@ -1083,7 +1071,9 @@
 
 					<div class="col" v-for="worklogPorSemana in worklogsPorSemana">
 						<div class=" d-flex justify-content-between align-items-center">
-							<span class="fs-6" :class="[ worklogPorSemana.diaIsToday ? 'destaque text-warning' : '' ]">@{{ worklogPorSemana.dia }} @{{ worklogPorSemana.diaSemana }}</span>&nbsp;<span class="badge rounded-pill" :class="[ worklogPorSemana.totalEmSegundos < 28800 || worklogPorSemana.totalEmSegundos > 28800 ? 'bg-danger' : 'bg-success' ]">@{{ worklogPorSemana.totalEmHoras }}</span>
+							<span class="fs-6" :class="[ worklogPorSemana.diaIsToday ? 'destaque text-warning' : '' ]">@{{ worklogPorSemana.dia }} @{{ worklogPorSemana.diaSemana }}</span>&nbsp;
+							<span class="badge rounded-pill bg-secondary" v-if="worklogPorSemana.diaIsHoliday" :title="worklogPorSemana.feriado">Feriado</span>
+							<span v-if="!worklogPorSemana.diaIsHoliday" class="badge rounded-pill" :class="[ worklogPorSemana.totalEmSegundos < 28800 || worklogPorSemana.totalEmSegundos > 28800 ? 'bg-danger' : 'bg-success' ]">@{{ worklogPorSemana.totalEmHoras }}</span>
 						</div>
 						<ul class="list-group mt-3">
 							<li class="list-group-item d-flex justify-content-between align-items-center" v-for="worklog in worklogPorSemana.worklogs">
@@ -1148,7 +1138,6 @@
 							<td>@{{ tarefa.sp }}</td>
 							<td>@{{ tarefa.sp_estimativa }}</td>
 							<td>
-
 								<a href="#" v-on:click.prevent="openModal(tarefa)">Detalhes</a>
 							</td>
 						</tr>
