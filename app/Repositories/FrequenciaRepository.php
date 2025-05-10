@@ -19,9 +19,9 @@ class FrequenciaRepository
 
 		return $this->model::query()
 			->with('usuario')
-			->where([
-				[ 'user_id', '=', $usuario_id ]
-			])
+			->when($data['usuario_id'], function($query) use ($data){
+				return $query->where('user_id', $data['usuario_id']);
+			})
 			->get();
 
 	}

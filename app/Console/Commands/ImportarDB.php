@@ -54,7 +54,9 @@ class ImportarDB extends Command
 				"failed_jobs",
 				"personal_access_tokens",
 				"roles",
-				"bancos"
+				"bancos",
+				"escalas",
+				"escalas_integrantes"
 			])) {
 				continue;
 			}

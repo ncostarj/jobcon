@@ -7,6 +7,7 @@ use App\Models\Slack\SlackNotification;
 use App\Resources\PontoResource;
 use Illuminate\Support\Facades\Log;
 use App\Repositories\PontoRepository;
+use Illuminate\Support\Facades\Http;
 
 class PontoService extends BaseService
 {
@@ -28,7 +29,14 @@ class PontoService extends BaseService
 		$response = $this->repository->insert($dados);
 		$this->notifyAssign($dados);
 		return $this->defaultReponse(200, '', $response);
+		// $this->sendBotAssign($dados);
 		// return $this->defaultReponse(200, '', []);
+	}
+
+	private function sendBotAssign($dados) {
+		logger($dados);
+		$response = Http::get('http://jobconrpa:3000/efetuar-marcacao', $dados);
+		logger($response);
 	}
 
 	private function notifyAssign($dados)
@@ -104,7 +112,7 @@ class PontoService extends BaseService
 
 	public function searchMonths(array $dados) {
 		$myCalendar = new MyCalendar();
-		$listMes = $this->repository->searchMonths();
+		$listMes = $this->repository->searchMonths($dados);
 
 		$meses = [];
 		foreach($listMes as $mes) {

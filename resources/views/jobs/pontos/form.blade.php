@@ -92,6 +92,16 @@
 				</div>
 				<div class="col">
 					<div class="form-floating mb-3">
+						<select name="ajuste_finalizado" class="form-select">
+							<option value="">Selecione</option>
+							<option @if($ponto->ajuste_finalizado == '1') selected="selected" @endif value="1">Sim</option>
+							<option @if($ponto->ajuste_finalizado == '0') selected="selected" @endif value="0">Não</option>
+						</select>
+						<label>Ajuste Finalizado: </label>
+					</div>
+				</div>
+				<div class="col">
+					<div class="form-floating mb-3">
 						<input id="observacao" name="observacao" class="form-control" type="text" value="{{ $ponto->observacao }}">
 						<label for="observacao">Observação: </label>
 					</div>

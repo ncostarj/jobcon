@@ -53,7 +53,7 @@ class PontoController extends Controller
 	public function update(Ponto $ponto, PontoRequest $request)
 	{
 
-		$pontoData = $request->only('dia','categoria','pedir_ajuste','observacao');
+		$pontoData = $request->only('dia','categoria','pedir_ajuste','ajuste_finalizado','observacao');
 		$ponto->update($pontoData);
 
 		if($request->has('entrada') && !empty($request->input('entrada'))) {

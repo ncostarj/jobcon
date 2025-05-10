@@ -31,9 +31,8 @@ class FeriasService extends BaseService
 	public function verifyDiasAteFerias(array $data)
 	{
 		$retorno = null;
-
 		$hoje = Carbon::parse(date('Y-m-d'));
-		$ultimaFeriasAgendada = $this->repository->getUltimaFeriasAgenda();
+		$ultimaFeriasAgendada = $this->repository->getUltimaFeriasAgenda($data);
 		$inicio = !empty($ultimaFeriasAgendada) ? $ultimaFeriasAgendada->inicio->format('Y-m-d') : '';
 
 		if(!empty($ultimaFeriasAgendada) && ($ultimaFeriasAgendada->ativo || $inicio > $hoje->format('Y-m-d'))) {
