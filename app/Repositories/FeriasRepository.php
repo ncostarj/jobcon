@@ -47,7 +47,11 @@ class FeriasRepository
 			->delete();
 	}
 
-	public function getUltimaFeriasAgenda() {
-		return $this->model::orderBy('inicio', 'desc')->take(1)->first();
+	public function getUltimaFeriasAgenda($data) {
+		return $this->model::query()
+			->when($data['usuario_id'], function($query) use($data) {
+				return $query->where('user_id', $data['usuario_id']);
+			})
+			->orderBy('inicio', 'desc')->take(1)->first();
 	}
 }

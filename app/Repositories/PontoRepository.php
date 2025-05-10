@@ -12,7 +12,8 @@ class PontoRepository
 {
 	protected $model;
 
-	public function __construct() {
+	public function __construct()
+	{
 		$this->model = Ponto::class;
 	}
 
@@ -20,16 +21,16 @@ class PontoRepository
 	{
 		extract($data);
 
-		$ordenacao = empty($ordenacao) ? 'desc': $ordenacao;
+		$ordenacao = empty($ordenacao) ? 'desc' : $ordenacao;
 
 		return $this->model::with('horarios')
 			->where([
-				[ 'user_id', '=', $usuario_id ]
+				['user_id', '=', $usuario_id]
 			])
-			->when($mes, function($query, $mes){
-				return $query->whereRaw('MONTH(dia) = ?', [ $mes ]);
+			->when($mes, function ($query, $mes) {
+				return $query->whereRaw('MONTH(dia) = ?', [$mes]);
 			})
-			->when($ordenacao, function($query, $ordenacao) {
+			->when($ordenacao, function ($query, $ordenacao) {
 				return $query->orderBy('dia', $ordenacao);
 			})
 			->get();
@@ -46,13 +47,13 @@ class PontoRepository
 				'categoria' => $data['categoria'],
 			];
 
-			if(!empty($data['pedir_ajuste'])) {
+			if (!empty($data['pedir_ajuste'])) {
 				$pontoData = array_merge($data, [
 					'pedir_ajuste' => $data['pedir_ajuste'],
 				]);
 			}
 
-			if(!empty($data['observacao'])) {
+			if (!empty($data['observacao'])) {
 				$pontoData = array_merge($data, [
 					'observacao' => $data['observacao']
 				]);
@@ -85,19 +86,19 @@ class PontoRepository
 
 			$pontoData = [];
 
-			if(!empty($data['pedir_ajuste'])) {
+			if (!empty($data['pedir_ajuste'])) {
 				$pontoData = array_merge($data, [
 					'pedir_ajuste' => $data['pedir_ajuste'],
 				]);
 			}
 
-			if(!empty($data['observacao_dia'])) {
+			if (!empty($data['observacao_dia'])) {
 				$pontoData = array_merge($data, [
 					'observacao' => $data['observacao_dia']
 				]);
 			}
 
-			if(!empty($pontoData)) {
+			if (!empty($pontoData)) {
 				$ponto
 					->fill($pontoData)
 					->save();
@@ -115,7 +116,7 @@ class PontoRepository
 					"tipo" => $data['tipo'],
 				];
 
-				if(!empty($data['observacao_horario'])) {
+				if (!empty($data['observacao_horario'])) {
 					$horarioData = array_merge($horarioData, [
 						"observacao" => $data['observacao_horario']
 					]);
@@ -135,45 +136,48 @@ class PontoRepository
 
 	public function delete() {}
 
-	public function searchMonths() {
+	public function searchMonths(array $dados)
+	{
 		return Ponto::query()
 			->selectRaw('date_format(dia, "%m") as mes, date_format(dia, "%Y") as ano')
+			->when($dados['usuario_id'], function($query) use ($dados){
+				return $query->where('user_id', $dados['usuario_id']);
+			})
 			->groupBy(DB::raw('date_format(dia, "%m"), date_format(dia, "%Y")'))
 			->orderBy('ano', 'desc')
 			->orderBy('mes', 'desc')
 			->get();
 	}
 
-	public function summarize($dados) {
+	public function summarize($dados)
+	{
 
 		$mes = isset($dados['mes']) ? $dados['mes'] : date('m');
 
 		$pontos = Ponto::query()
-			// ->where([
-			// 	// ['dia', '>=', $firstDay],
-			// 	// ['dia', '<=', $lastDay],
-			// ])
-			->whereRaw('MONTH(dia) = ?', [ $mes ])
+			->when($dados['usuario_id'], function ($query) use ($dados) {
+				return $query->where('user_id', $dados['usuario_id']);
+			})
+			->whereRaw('MONTH(dia) = ?', [$mes])
 			->get();
 
 		$summarize = [];
-		foreach($pontos as $ponto) {
+		foreach ($pontos as $ponto) {
 			$summarize[$ponto->categoria] ??= 0;
 			$summarize[$ponto->categoria] += 1;
 
 			$summarize['ajustes'] ??= 0;
-			if($ponto->pedir_ajuste) {
-				$summarize['ajustes']+=1;
+			if ($ponto->pedir_ajuste) {
+				$summarize['ajustes'] += 1;
 			}
 
 			$summarize['observacoes'] ??= 0;
-			if(!empty($ponto->observacao)) {
-                $summarize['observacoes']+=1;
-            }
+			if (!empty($ponto->observacao)) {
+				$summarize['observacoes'] += 1;
+			}
 
 			$summarize['total'] ??= 0;
 			$summarize['total'] += 1;
-
 		}
 
 		return $summarize;
