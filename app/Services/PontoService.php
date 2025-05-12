@@ -112,7 +112,7 @@ class PontoService extends BaseService
 
 	public function searchMonths(array $dados) {
 		$myCalendar = new MyCalendar();
-		$listMes = $this->repository->searchMonths();
+		$listMes = $this->repository->searchMonths($dados);
 
 		$meses = [];
 		foreach($listMes as $mes) {

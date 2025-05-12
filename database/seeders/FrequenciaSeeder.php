@@ -53,7 +53,8 @@ class FrequenciaSeeder extends Seeder
 	{
 		// $saldo = $this->calculateFrequencia(13.87, 0.22, 1.47, 12.62);
 		// $saldo = $this->calculateFrequencia(11.87, 0, 10.18, 1.68);
-		extract($this->calculateFrequencia(11.68, 0, 0.92, 10.77));
+		// extract($this->calculateFrequencia(11.68, 0, 0.92, 10.77));
+		extract($this->calculateFrequencia(14.75,0,2.10,12.65));
 
 		DB::table('frequencias')->insert([
 			[

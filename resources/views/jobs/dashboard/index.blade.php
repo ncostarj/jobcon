@@ -738,7 +738,7 @@
 		el: '#ferias-app',
 		data: {
 			gateway: new Gateway(),
-			usuarioId: '{{ $dados->usuario->id }}',
+			usuarioId: usuario.id,
 			ultimasFeriasAgendadas: null,
 			listaFerias: [],
 			feriasLoading: true,
@@ -786,10 +786,13 @@
 
 				<div class="row mb-4">
 					<div class="col" v-for="escala in escalas">
-						<h6>@{{ escala.dia_formatado }} @{{ escala.dia_semana }}</h6>
+						<h6 :class="[ escala.is_today ? 'text-warning' : '' ]">
+								@{{ escala.dia_formatado }} @{{ escala.dia_semana }}&nbsp;
+								@{{ escala.dia_equipe ? 'Dia ' + dia.time : '' }}
+						</h6>
 						<ul class="list-group">
 							<li class="list-group-item d-flex justify-content-between align-items-start">
-								@{{ escala.dia_equipe ? 'Dia ' + dia.time : 'Escalados:' }}
+								Escalados:
 								<span class="badge rounded-pill bg-primary">@{{ escala.escalacao.length }}</span>
 							</li>
 							<li class="list-group-item" :class="[ usuarioNome.includes(escalado) ? 'bg-secondary' : '' ]" v-for="escalado in escala.escalacao">
@@ -913,31 +916,31 @@
 								<div class="ms-2 me-auto">
 									<div class="fw-bold">Total: </div>
 								</div>
-								<span class="badge rounded-pill bg-primary">@{{ resumos.total }}</span>
+								<span class="badge rounded-pill bg-primary">@{{ resumos.total??0 }}</span>
 							</li>
 							<li class="list-group-item d-flex justify-content-between align-items-start">
 								<div class="ms-2 me-auto">
 									<div class="fw-bold">Presencial: </div>
 								</div>
-								<span class="badge rounded-pill bg-primary">@{{ resumos.presencial }}</span>
+								<span class="badge rounded-pill bg-primary">@{{ resumos.presencial??0 }}</span>
 							</li>
 							<li class="list-group-item d-flex justify-content-between align-items-start">
 								<div class="ms-2 me-auto">
 									<div class="fw-bold">Home Office: </div>
 								</div>
-								<span class="badge rounded-pill bg-primary">@{{ resumos.home_office }}</span>
+								<span class="badge rounded-pill bg-primary">@{{ resumos.home_office??0 }}</span>
 							</li>
 							<li class="list-group-item d-flex justify-content-between align-items-start">
 								<div class="ms-2 me-auto">
 									<div class="fw-bold">Ajustes: </div>
 								</div>
-								<span class="badge rounded-pill bg-primary">@{{ resumos.ajustes }}</span>
+								<span class="badge rounded-pill bg-primary">@{{ resumos.ajustes??0 }}</span>
 							</li>
 							<li class="list-group-item d-flex justify-content-between align-items-start">
 								<div class="ms-2 me-auto">
 									<div class="fw-bold">Observações: </div>
 								</div>
-								<span class="badge rounded-pill bg-primary">@{{ resumos.observacoes }}</span>
+								<span class="badge rounded-pill bg-primary">@{{ resumos.observacoes??0 }}</span>
 							</li>
 						</ul>
 					</div>
@@ -981,6 +984,9 @@
 								<td>@{{ ponto.credito }}</td>
 								<td>@{{ ponto.debito }}</td>
 							</tr>
+							<tr v-if="!pontoLoading && listaPontos.length == 0">
+								<td colspan="12">Nenhum ponto cadastrado até o momento.</td>
+							</tr>
 							<tr>
 								<td class="text-end" colspan="8">Subtotal:</td>
 								<td class="text-success"><strong>@{{ subtotalPontos.credito }}</strong></td>
@@ -995,9 +1001,6 @@
 								<td colspan="8">&nbsp;</td>
 								<td><!--Saldo Anterior:--> @{{ bancoHoras.saldo_anterior }}</td>
 								<td><!--Saldo Atual:--> @{{ bancoHoras.saldo_atual }}</td>
-							</tr>
-							<tr v-if="!pontoLoading && listaPontos.length == 0">
-								<td colspan="9">Nenhum ponto cadastrado até o momento.</td>
 							</tr>
 						</table>
 					</div>
@@ -1226,7 +1229,7 @@
 					</tr>
 
 					<tr v-if="listaContracheques.length == 0">
-						<td colspan="7">Nenhum contracheque cadastrado até o momento.</td>
+						<td colspan="8">Nenhum contracheque cadastrado até o momento.</td>
 					</tr>
 				</table>
 			</div>
@@ -1286,7 +1289,7 @@
 							</tr>
 
 							<tr v-if="listaFerias.length == 0">
-								<td colspan="4">Nenhumas férias agendadas até o momento.</td>
+								<td colspan="6">Nenhumas férias agendadas até o momento.</td>
 							</tr>
 						</table>
 

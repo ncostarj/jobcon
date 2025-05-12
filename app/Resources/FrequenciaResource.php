@@ -11,6 +11,17 @@ class FrequenciaResource {
 	}
 
 	public function toObject($resource) {
+
+		if(empty($resource)) {
+			return (object) [
+				'id' => null,
+				'saldo_anterior' => '00:00',
+				'credito' => '00:00',
+				'debito' => '00:00',
+				'saldo_atual' => '00:00'
+			];
+		}
+
 		return (object) [
 			'id' => $resource->id,
 			'saldo_anterior' => date('H:i', strtotime($resource->saldo_anterior)),

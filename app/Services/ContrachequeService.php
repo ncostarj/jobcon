@@ -26,6 +26,9 @@ class ContrachequeService extends BaseService
 
 	public function searchYears(array $dados) {
 		$query = Contracheque::query()
+			->when($dados['usuario_id'], function($query) use ($dados){
+				return $query->where('user_id', $dados['usuario_id']);
+			})
 			->selectRaw('date_format(competencia, "%Y") as ano');
 		// if($dados['ano']) {
 		// 	$query = $query

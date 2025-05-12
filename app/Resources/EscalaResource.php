@@ -59,8 +59,11 @@ class EscalaResource
 			});
 		}
 
+		$hoje = date('Y-m-d');
+
 		foreach ($escalas as $escala) {
 			if($escala->dia >= $inicio && $escala->dia <= $fim) {
+				$escala->is_today = $escala->dia == $hoje;
 				$data[] = $escala;
 			}
 		}
