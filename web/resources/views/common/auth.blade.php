@@ -21,7 +21,7 @@
     <body class="" data-bs-theme="dark">
 		<div class="container-fluid">
 			<div class="row">
-				<div class="col-2 mt-5 offset-5">
+				<div class="col-3 mt-5 offset-4">
 					@yield('content')
 				</div>
 			</div>
