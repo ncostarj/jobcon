@@ -1,0 +1,5 @@
+<?php
+return [
+    'SPOTIFY_CLIENT_ID' => env('SPOTIFY_CLIENT_ID'),
+    'SPOTIFY_CLIENT_SECRET' => env('SPOTIFY_CLIENT_SECRET'),
+];
