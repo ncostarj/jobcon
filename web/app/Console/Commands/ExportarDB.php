@@ -47,9 +47,9 @@ class ExportarDB extends Command
 		{
 			$nomeTabela = $table->Tables_in_jobcon;
 			
-			if($nomeTabela == "contracheques") {
-				continue;
-			}
+			// if($nomeTabela == "contracheques") {
+			// 	continue;
+			// }
 
 			$registros = DB::table($nomeTabela)->get();
 

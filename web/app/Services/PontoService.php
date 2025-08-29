@@ -27,7 +27,7 @@ class PontoService extends BaseService
 	public function assign($dados)
 	{
 		$response = $this->repository->insert($dados);
-		$this->notifyAssign($dados);
+		// $this->notifyAssign($dados);
 		return $this->defaultReponse(200, '', $response);
 		// $this->sendBotAssign($dados);
 		// return $this->defaultReponse(200, '', []);
@@ -51,14 +51,14 @@ class PontoService extends BaseService
 			default: $texto = '-'; $icone = ':bomba:'; break;
 		}
 
-		Log::info("{$texto} {$icone}");
+		// Log::info("{$texto} {$icone}");
 
-		(new SlackNotification())
-			->setToken(config('slack.SLACK_BOT_USER_OAUTH_TOKEN'))
-			->setChannel(config('slack.SLACK_BOT_USER_CHANNEL_ID'))
-			->setMessage($texto)
-			->setStatus($icone)
-			->notify();
+		// (new SlackNotification())
+		// 	->setToken(config('slack.SLACK_BOT_USER_OAUTH_TOKEN'))
+		// 	->setChannel(config('slack.SLACK_BOT_USER_CHANNEL_ID'))
+		// 	->setMessage($texto)
+		// 	->setStatus($icone)
+		// 	->notify();
 	}
 
 	public function sumHours(array $dados)
