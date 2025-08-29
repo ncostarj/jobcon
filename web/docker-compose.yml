@@ -1,0 +1,32 @@
+services:
+  jobconweb:
+    image: nginx:latest
+    hostname: jobcon.homelab
+    container_name: jobconweb
+    working_dir: /var/www/newton/jobcon
+    # extra_hosts:
+    #   - "jobcon.homelab=127.0.0.1"
+    # ports:
+    #   - 8083:80
+    volumes:
+      - .:/var/www/newton/jobcon
+      - ./docker/config/nginx/sites-available:/etc/nginx/sites-available
+      - ./docker/config/nginx/sites-enabled:/etc/nginx/sites-enabled
+      - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+    restart: unless-stopped
+    networks:
+      homelab:
+  jobconapp:
+    build: ./docker/config/php/74
+    container_name: jobconapp
+    working_dir: /var/www/newton/jobcon
+    volumes:
+      - ./docker/config/php/php.ini:/usr/local/etc/php/php.ini
+      - .:/var/www/newton/jobcon
+    restart: unless-stopped
+    networks:
+      homelab:
+networks:
+  homelab:
+    name: homelab_lan
+    external: true
