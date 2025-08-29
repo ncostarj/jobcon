@@ -175,7 +175,7 @@ class ImportarEscala extends Command
 			$arquivo = public_path("xls/escala_fintools_{$dataYmd}.xlsx");
 			$linhas = Excel::toArray(new EscalaImport, $arquivo)[0];
 
-			$this->log("Processando o arquivo xls da escala.");
+			$this->log("Processando o arquivo xls da escala do dia {$dataRef}.");
 
 			$lista = $this->processarLinhas($linhas, $linhas[0], $linhas[1], $dataRef);
 
