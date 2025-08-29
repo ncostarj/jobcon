@@ -124,6 +124,9 @@
     </transition>
 </script>
 
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.17/locales-all.global.min.js'></script>
+
 <script type="text/javascript">
 	let usuario = JSON.parse('@json($dados->usuario)');
 	let projeto = JSON.parse('@json($dados->projeto)');
@@ -197,6 +200,57 @@
 			return dayOfWeek;
 		}
 	}
+
+	(new Gateway())
+	.get(`{{ route('api.v1.jobs.escalas.listar') }}`)
+		.then((response) => {
+
+			console.log(response);
+
+			let eventos = [];
+
+			response.data.forEach((escala) => {
+
+				escala.escalacao.forEach((escalado) => {
+
+					let evento = {
+						start: escala.dia,
+						title: escalado,
+					};
+
+					if (usuario.name.includes(escalado)) {
+						evento.backgroundColor = '#f00'; // cor vermelha
+						evento.borderColor = '#f00'; // cor vermelha;
+						eventos.push(evento)
+					}
+
+				});
+
+			});
+
+			eventos.push({
+				title: 'Férias Newton',
+				start: '2025-07-28',
+				end: '2025-08-12',
+				backgroundColor: '#FF8C00'
+			});
+
+			var calendarEl = document.getElementById('calendar');
+			var calendar = (new FullCalendar.Calendar(calendarEl, {
+				initialView: 'dayGridMonth',
+				locale: 'pt-BR',
+				events: eventos,
+				weekends: false,
+				dayMaxEventRows: true,
+				views: {
+					dayGridMonth: {
+						dayMaxEventRows: 6
+					}
+				}
+			})).render();
+		}).catch(error => {
+			console.log(error);
+		});
 
 	// var appEscala = new Vue({
 	// 	el: '#escala-app',
@@ -840,12 +894,11 @@
 		<div class="card">
 			<div class="card-body" id="calendario-app">
 				<h1 class="card-title">
-					<i class="bi bi-calendar3"></i> Calendário
+					<!-- <i class="bi bi-calendar3"></i>Avisos -->
 					@{{ calendario.hoje.diaDaSemana }}
 					@{{ calendario.hoje.dia }} de @{{ calendario.hoje.mes }} de @{{ calendario.hoje.ano }}
 					<span v-if="!calendarioLoading">@{{ relogio.hora }}:@{{ relogio.minuto }}:@{{ relogio.segundo }}</span>
 				</h1>
-				<a href="{{ route('jobs.dashboard.agenda_index') }}">Agenda</a>
 				<div class="row pt-3 pb-3">
 					<div class="col-12">
 						<div class="text-center" v-if="calendarioLoading">
@@ -868,7 +921,15 @@
 		</div>
 	</div>
 	<div class="col">
-
+		<div class="card">
+			<div class="card-body">
+				<h1 class="card-title">
+					<i class="bi bi-calendar3"></i> Agenda
+				</h1>
+				<a href="{{ route('jobs.dashboard.agenda_index') }}">Agenda Completa</a>
+				<div id="calendar"></div>
+			</div>
+		</div>
 	</div>
 </div>
 <div class="row mt-4">
