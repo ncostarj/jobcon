@@ -140,20 +140,20 @@ class PontoController extends Controller
 
 	public function assign(Request $request, PontoRepository $horarioRepository, SlackNotification $slackNotification)
 	{
-		switch ($request->tipo) {
-			case 'entrada':
-				$saudacao = new Saudacao("Bom dia!", ":house:");
-				break;  //= 'Bom dia';
-			case 'almoco_saida':
-				$saudacao = new Saudacao("Almoço!", ":knife_fork_plate:");
-				break; //'Almoço';
-			case 'almoco_retorno':
-				$saudacao = new Saudacao("Voltando!", ":house:");
-				break; //'Voltando'
-			case 'saida':
-				$saudacao = new Saudacao("Saindo!", ":bed:");
-				break; //'Saindo';
-		}
+		// switch ($request->tipo) {
+		// 	case 'entrada':
+		// 		$saudacao = new Saudacao("Bom dia!", ":house:");
+		// 		break;  //= 'Bom dia';
+		// 	case 'almoco_saida':
+		// 		$saudacao = new Saudacao("Almoço!", ":knife_fork_plate:");
+		// 		break; //'Almoço';
+		// 	case 'almoco_retorno':
+		// 		$saudacao = new Saudacao("Voltando!", ":house:");
+		// 		break; //'Voltando'
+		// 	case 'saida':
+		// 		$saudacao = new Saudacao("Saindo!", ":bed:");
+		// 		break; //'Saindo';
+		// }
 
 		// Log::info((array) $saudacao);
 

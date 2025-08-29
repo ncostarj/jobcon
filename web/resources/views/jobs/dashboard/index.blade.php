@@ -840,14 +840,14 @@
 		<div class="card">
 			<div class="card-body" id="calendario-app">
 				<h1 class="card-title">
-					<i class="bi bi-calendar3"></i> Calendário 
-					@{{ calendario.hoje.diaDaSemana }} 
-					@{{ calendario.hoje.dia }} de @{{ calendario.hoje.mes }} de @{{ calendario.hoje.ano }} 
+					<i class="bi bi-calendar3"></i> Calendário
+					@{{ calendario.hoje.diaDaSemana }}
+					@{{ calendario.hoje.dia }} de @{{ calendario.hoje.mes }} de @{{ calendario.hoje.ano }}
 					<span v-if="!calendarioLoading">@{{ relogio.hora }}:@{{ relogio.minuto }}:@{{ relogio.segundo }}</span>
 				</h1>
 				<a href="{{ route('jobs.dashboard.agenda_index') }}">Agenda</a>
 				<div class="row pt-3 pb-3">
-					<div class="col-3">
+					<div class="col-12">
 						<div class="text-center" v-if="calendarioLoading">
 							<div class="spinner-border" role="status">
 								<span class="visually-hidden">Loading...</span>
@@ -866,6 +866,9 @@
 				</div>
 			</div>
 		</div>
+	</div>
+	<div class="col">
+
 	</div>
 </div>
 <div class="row mt-4">
@@ -969,9 +972,8 @@
 								<th>Almoço</th>
 								<th>Retorno</th>
 								<th>Saída</th>
-								<th>Horas</th>
-								<th>Crédito</th>
-								<th>Débito</th>
+								<!-- <th>Crédito</th>
+								<th>Débito</th> -->
 							</tr>
 							<tr v-if="pontoLoading">
 								<td colspan="8" class="text-center">
@@ -990,31 +992,46 @@
 								</td>
 								<td>@{{ ponto.dia }} (<small>@{{ ponto.diaSemana }}</small>)</td>
 								<td>@{{ ponto.entrada }}</td>
-								<td>@{{ ponto.almoco_saida }}</td>
-								<td>@{{ ponto.almoco_retorno }}</td>
-								<td>@{{ ponto.saida }}</td>
-								<td>-</td>
+								<td>
+									<span v-if="ponto.almoco_saida != '-'">@{{ ponto.almoco_saida }}</span>
+
+									<span v-if="ponto.almoco_saida == '-'">@{{ ponto.horario_almoco_saida }} (prev)</span>
+								</td>
+								<td>
+									<span v-if="ponto.almoco_retorno != '-'">@{{ ponto.almoco_retorno }}</span>
+									<span v-if="ponto.almoco_saida != '-' && ponto.horario_intervalo != '00:00'" :class="[ponto.horario_intervalo != '00:00' ? 'text-warning' : '']">(@{{ ponto.horario_intervalo }})</span>
+									<span v-if="ponto.almoco_retorno == '-' ">@{{ ponto.horario_retorno }} (prev)</span>
+								</td>
+								<td>
+									<span v-if="ponto.saida != '-'">@{{ ponto.saida }}</span>
+									<span v-if="ponto.saida == '-'">@{{ ponto.horario_jornada }} (prev)</span>
+									<span v-if="ponto.horario_total_jornada!='00:00'" :class="[ponto.horario_total_jornada!='00:00' ? 'text-warning' : '']">@{{ ponto.horario_total_jornada }}
+								</td>
+								<!--
 								<td>@{{ ponto.credito }}</td>
 								<td>@{{ ponto.debito }}</td>
+								-->
 							</tr>
 							<tr v-if="!pontoLoading && listaPontos.length == 0">
 								<td colspan="12">Nenhum ponto cadastrado até o momento.</td>
 							</tr>
 							<tr>
-								<td class="text-end" colspan="8">Subtotal:</td>
+								<td class="text-end" colspan="5">Subtotal:</td>
 								<td class="text-success"><strong>@{{ subtotalPontos.credito }}</strong></td>
 								<td class="text-danger"><strong>@{{ subtotalPontos.debito }}</strong></td>
 							</tr>
 							<tr>
-								<td class="text-end" colspan="8">PortalRH</td>
+								<td class="text-end" colspan="5">PortalRH</td>
 								<td class="text-success">@{{ bancoHoras.credito }}</td>
 								<td class="text-danger">@{{ bancoHoras.debito }}</td>
 							</tr>
+							<!--
 							<tr>
-								<td colspan="8">&nbsp;</td>
-								<td><!--Saldo Anterior:--> @{{ bancoHoras.saldo_anterior }}</td>
-								<td><!--Saldo Atual:--> @{{ bancoHoras.saldo_atual }}</td>
+								<td colspan="5">&nbsp;</td>
+								<td>Saldo Anterior: @{{ bancoHoras.saldo_anterior }}</td>
+								<td>Saldo Atual: @{{ bancoHoras.saldo_atual }}</td>
 							</tr>
+							-->
 						</table>
 					</div>
 
@@ -1129,8 +1146,8 @@
 							<th class="col-2"></th>
 							<th class="col-2">Status</th>
 							<th class="col-2">Resumo</th>
-							<th class="col-2">Pontos</th>
 							<th class="col-2">Estimativa de Pontos</th>
+							<th class="col-2">Pontos</th>
 							<th class="col-2">Ações</th>
 						</tr>
 						<tr v-if="tarefaLoading">
@@ -1151,8 +1168,8 @@
 							</td>
 							<td>@{{ tarefa.status.nome }}</td>
 							<td>@{{ tarefa.resumo }}</td>
-							<td :class="[ tarefa.sp == 0 ? 'bg-danger' : '' ]">@{{ tarefa.sp }}</td>
 							<td :class="[ tarefa.sp_estimativa == 0 ? 'bg-danger' : '' ]">@{{ tarefa.sp_estimativa }}</td>
+							<td :class="[ tarefa.sp == 0 ? 'bg-danger' : '' ]">@{{ tarefa.sp }}</td>
 							<td>
 								<a href="#" v-on:click.prevent="openModal(tarefa)">Detalhes</a>
 							</td>
