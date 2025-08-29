@@ -157,15 +157,14 @@ class Ponto extends Model
 		$entrada = strtotime($this->entrada->hora);
 		$intervalo = strtotime($this->tempoIntervalo);
 		$saida = strtotime($this->saida->hora ?? $this->horario_jornada);
-		$saidaTotal = $saida + $intervalo;
-		$diferenca = $saidaTotal - $entrada;
-		$diferenca2 = $diferenca > $jornadaPadrao ? $diferenca - $jornadaPadrao : $jornadaPadrao - $diferenca;
+		$jornadaTotal = strtotime(date('H:i',$entrada+$jornadaPadrao+$intervalo));
+		$diferenca = $saida > $jornadaTotal ? $saida - $jornadaTotal : $jornadaTotal - $saida;
 
 		switch (true) {
-			case $diferenca > $jornadaPadrao:
+			case $saida > $jornadaTotal:
 				$tipo = '+';
 				break;
-			case $diferenca < $jornadaPadrao:
+			case $saida < $jornadaTotal:
 				$tipo = '-';
 				break;
 			case $diferenca == '00:00':
@@ -176,6 +175,6 @@ class Ponto extends Model
 				break;
 		};
 
-		return "{$tipo}" . gmdate('H:i', $diferenca2);
+		return "{$tipo}" . gmdate('H:i', $diferenca);
 	}
 }
