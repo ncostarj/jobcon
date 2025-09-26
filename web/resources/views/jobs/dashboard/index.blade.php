@@ -367,8 +367,35 @@
 				credito: '00:00'
 			},
 			pontoLoading: true,
+			calendario: {
+				hoje: {
+					dia: '',
+					mes: '',
+					ano: ''
+				},
+				qtdDiasMes: 0,
+				qtdDiasAteFimMes: 0,
+				qtdDiasAtePagamento: 0,
+			},
+			relogio: {
+				hora: 1,
+				minuto: 2,
+				segundo: 3,
+			},
 		},
 		methods: {
+			carregarCalendario: function() {
+				this.calendarioLoading = true;
+				this.gateway
+					.get(`{{ route('api.v1.jobs.calendario.exibir') }}`)
+					.then((response) => {
+						this.calendario = response.data;
+						this.calendarioLoading = false;
+					})
+					.catch(error => {
+						console.log(error);
+					});
+			},
 			buscarMeses: function() {
 				let objDate = new Date();
 				let month = objDate.getMonth() + 1;
@@ -494,7 +521,19 @@
 			this.buscarMeses();
 			this.listar();
 			this.obterBancoHoras();
+			this.carregarCalendario();
 		},
+		mounted: function() {
+			setInterval(() => {
+				let date = new Date();
+				let hora = date.getHours();
+				let minuto = date.getMinutes();
+				let segundo = date.getSeconds();
+				this.relogio.hora = hora < 10 ? `0${hora}` : hora;
+				this.relogio.minuto = minuto < 10 ? `0${minuto}` : minuto;
+				this.relogio.segundo = segundo < 10 ? `0${segundo}` : segundo;
+			}, 1000);
+		}
 	});
 	// register modal component
 	Vue.component("modal", {
@@ -890,7 +929,7 @@
 	</div>
 </div>
 <div class="row mt-2">
-	<div class="col">
+	<div class="col d-none">
 		<div class="card">
 			<div class="card-body" id="calendario-app">
 				<h1 class="card-title">
@@ -921,7 +960,7 @@
 		</div>
 	</div>
 	<div class="col">
-		<div class="card">
+		<div class="card d-none">
 			<div class="card-body">
 				<h1 class="card-title">
 					<i class="bi bi-calendar3"></i> Agenda
@@ -937,11 +976,16 @@
 		<div class="card" id="ponto-app">
 			<div class="card-body">
 				<div class="row">
-					<div class="col-2">
-						<h1 class="card-title"><i class="bi bi-alarm"></i> Ponto</h1>
+					<div class="col d-flex justify-content-between align-items-start">
+						<h1 class="card-title"><i class="bi bi-alarm"></i>Ponto</h1>
+						<h1>
+							@{{ calendario.hoje.diaDaSemana }}
+							@{{ calendario.hoje.dia }} de @{{ calendario.hoje.mes }} de @{{ calendario.hoje.ano }}
+							<span v-if="!calendarioLoading">@{{ relogio.hora }}:@{{ relogio.minuto }}:@{{ relogio.segundo }}</span>
+						</h1>
 					</div>
 				</div>
-				<div class="row">
+				<div class="row mt-4 mb-4">
 					<div class="col-2">
 						<a href="#" title="Marcar Entrada" v-on:click.prevent="marcar('{{ route('api.v1.jobs.pontos.marcar') }}', 'entrada')"><i class="bi bi-arrow-right-circle-fill fs-2"></i></a>
 						<a href="#" title="Marcar Almoço" v-on:click.prevent="marcar('{{ route('api.v1.jobs.pontos.marcar') }}', 'almoco_saida')"><i class="bi bi-pause-circle-fill fs-2"></i></a>
@@ -988,6 +1032,16 @@
 				<div class="row">
 
 					<div class="col-3">
+						<h1>@{{ calendario.hoje.mes }} tem</h1>
+						<ul class="list-group mb-5">
+							<li class="list-group-item">@{{ calendario.qtdDiasMes }} dias</li>
+							<li class="list-group-item">@{{ calendario.qtdDiaUteisMes }} dias úteis</li>
+							<li class="list-group-item">@{{ calendario.qtdDiasAteFimMes }} dias até o fim do mês</li>
+							<li class="list-group-item">@{{ calendario.qtdDiasUteisAteFimMes }} dias uteis até o fim do mês</li>
+							<li class="list-group-item">@{{ calendario.qtdDiasAtePagamento }} dias até o pagamento</li>
+							<!-- <li class="list-group-item">a<span v-if="calendario.diferenca > 0">@{{ calendario.diaPagamentoPrevisto }}</span></li> -->
+						</ul>
+
 						<ul class="list-group mb-5">
 							<li class="list-group-item d-flex justify-content-between align-items-start">
 								<div class="ms-2 me-auto">
@@ -1346,6 +1400,11 @@
 							Estamos de férias. Faltam @{{ ultimasFeriasAgendadas.diasAteRetorno }} dias para o retorno.
 						</h4>
 
+					</div>
+				</div>
+
+				<div class="row mt-4 mb-4">
+					<div class="col">
 						<a href="{{ route('jobs.ferias.create') }}" title="adicionar"><i class="bi bi-plus-square fs-4"></i></a>
 					</div>
 				</div>

@@ -1,7 +1,7 @@
 services:
   siteweb:
-    # build: .
-    image: myimg
+    build: .
+    # image: myimg
     hostname: site.homelab
     container_name: siteweb
     working_dir: /var/www/site

@@ -1,5 +1,11 @@
 FROM nginx:latest
 
+# Install base dependencies
+RUN apt-get update && apt-get install -y \
+    cron \
+    vim \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN mkdir -p /var/cache/nginx/client_temp && \
     chown -R nginx:nginx /var/cache/nginx
 
@@ -8,6 +14,8 @@ WORKDIR /var/www/site
 
 COPY ./config/default.conf /etc/nginx/conf.d/default.conf
 COPY ./www/site/index.html /var/www/site/index.html
+
+RUN cron
 
 EXPOSE 8084
 

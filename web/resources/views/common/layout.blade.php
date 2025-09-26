@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="refresh" content="3600" >
         <title>{{ config('app.name') }} @yield('title')</title>
 
 		<link rel="icon" type="image/x-icon" href="{{ asset('favicon-16x16.png') }}">
@@ -37,18 +38,15 @@
 
     <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/vue/vue.global.js') }}"></script>
-	<!-- <script type="text/javascript">
-		const toastLiveExample = document.getElementById('liveToast')
-
-		// if (toastTrigger) {
-			const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
-			// toastTrigger.addEventListener('click', () => {
-				toastBootstrap.show();
-			// })
-		// }
-	</script> -->
-
 	<script type="text/javascript">
+		// const toastLiveExample = document.getElementById('liveToast')
+		// if (toastTrigger) {
+		// 	const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+		// 	toastTrigger.addEventListener('click', () => {
+		// 		toastBootstrap.show();
+		// 	 })
+		// }
+
 		function toggleMenu() {
 			let menu = document.querySelector('.menu');
 
