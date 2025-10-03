@@ -19,19 +19,23 @@ class PontoRepository
 
 	public function get(array $data = [])
 	{
+		logger($data);
 		extract($data);
-
+		
 		$ordenacao = empty($ordenacao) ? 'desc' : $ordenacao;
 
 		return $this->model::with('horarios')
 			->where([
 				['user_id', '=', $usuario_id]
 			])
-			->when($mes, function ($query, $mes) {
-				return $query->whereRaw('MONTH(dia) = ?', [$mes]);
+			->when($mes, function ($query, $paramMes) {
+				return $query->whereRaw('MONTH(dia) = ?', [$paramMes]);
 			})
-			->when($ordenacao, function ($query, $ordenacao) {
-				return $query->orderBy('dia', $ordenacao);
+			->when($ano, function ($query, $paramAno) {
+				return $query->whereRaw('YEAR(dia) = ?', [$paramAno]);
+			})
+			->when($ordenacao, function ($query, $paramOrdenacao) {
+				return $query->orderBy('dia', $paramOrdenacao);
 			})
 			->get();
 	}

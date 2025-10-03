@@ -65,6 +65,7 @@ class PontoService extends BaseService
 	{
 		$credito = strtotime("00:00");
 		$debito = strtotime("00:00");
+
 		// ['mes' => date('m'), 'usuario_id' => User::where('name', 'Newton Gonzaga Costa')->first()->id]
 		foreach ($this->repository->get($dados) as $ponto) {
 
@@ -119,7 +120,8 @@ class PontoService extends BaseService
 			$meses[] = [
 				'numero' => $mes->mes,
 				'nome' => $myCalendar->getMes($mes->mes),
-				'ano' => $mes->ano
+				'ano' => $mes->ano,
+				'mes_ano' => "{$mes->ano}-{$mes->mes}",
 			];
 		}
 

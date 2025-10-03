@@ -205,8 +205,6 @@
 	.get(`{{ route('api.v1.jobs.escalas.listar') }}`)
 		.then((response) => {
 
-			console.log(response);
-
 			let eventos = [];
 
 			response.data.forEach((escala) => {
@@ -397,15 +395,11 @@
 					});
 			},
 			buscarMeses: function() {
-				let objDate = new Date();
-				let month = objDate.getMonth() + 1;
-				let year = objDate.getYear();
+				let hoje = new Date();
 				this.gateway
 					.get(`{{ route('api.v1.jobs.pontos.buscar_meses') }}?usuario_id=${this.pontoForm.usuarioId}`)
 					.then((response) => {
 						this.pontoForm.meses = response.data;
-						month = month < 10 ? `0${month}` : month;
-						this.pontoForm.mes = month;
 					})
 					.catch(error => {
 						console.log(error);
@@ -450,14 +444,16 @@
 			},
 			listar: function() {
 				this.pontoLoading = true;
-				let month = (new Date()).getMonth() + 1;
+				let hoje = new Date();
+				let month = hoje.getMonth() + 1;
+				let year = hoje.getFullYear();
 
 				if (this.pontoForm.mes) {
-					month = this.pontoForm.mes;
+					[year, month] = this.pontoForm.mes.split('-');
 				}
 
 				this.gateway
-					.get(`{{ route('api.v1.jobs.pontos.listar') }}?mes=${month}&usuario_id=${this.pontoForm.usuarioId}&ordenacao=${this.pontoForm.ordenacao??''}`)
+					.get(`{{ route('api.v1.jobs.pontos.listar') }}?mes=${month}&ano=${year}&usuario_id=${this.pontoForm.usuarioId}&ordenacao=${this.pontoForm.ordenacao??''}`)
 					.then((response) => {
 						this.listaPontos = response.data;
 						this.pontoLoading = false;
@@ -470,14 +466,16 @@
 				this.resumo();
 			},
 			calcularSubtotal: function() {
-				let month = (new Date()).getMonth() + 1;
+				let hoje = new Date();
+				let month = hoje.getMonth() + 1;
+				let year = hoje.getFullYear();
 
 				if (this.pontoForm.mes) {
-					month = this.pontoForm.mes;
+					[year, month] = this.pontoForm.mes.split('-');
 				}
 
 				this.gateway
-					.get(`{{ route('api.v1.jobs.pontos.calcular_subtotal') }}?mes=${month}&usuario_id=${this.pontoForm.usuarioId}`)
+					.get(`{{ route('api.v1.jobs.pontos.calcular_subtotal') }}?mes=${month}&ano=${year}&usuario_id=${this.pontoForm.usuarioId}`)
 					.then((response) => {
 						this.subtotalPontos = response.data;
 					})
@@ -515,8 +513,10 @@
 		},
 		computed: {},
 		created: function() {
-			let mesAtual = (new Date()).getMonth() + 1;
-			this.pontoForm.mes = mesAtual;
+			let hoje = new Date()
+			let mesAtual = hoje.getMonth() + 1;
+			let anoAtual = hoje.getFullYear();
+			this.pontoForm.mes = `${anoAtual}-${mesAtual}`;
 			this.resumo();
 			this.buscarMeses();
 			this.listar();
@@ -594,31 +594,31 @@
 					});
 			},
 			listarUsuarios: function() {
-				this.gateway
-					.get(`{{ route('api.v1.jobs.tarefas.usuarios') }}`)
-					.then((response) => {
-						this.tarefaForm.listaUsuarios = response.data.sort((a, b) => {
-							if (a.nome < b.nome) {
-								return -1;
-							}
-						});
+				// this.gateway
+				// 	.get(`{{ route('api.v1.jobs.tarefas.usuarios') }}`)
+				// 	.then((response) => {
+				// 		this.tarefaForm.listaUsuarios = response.data.sort((a, b) => {
+				// 			if (a.nome < b.nome) {
+				// 				return -1;
+				// 			}
+				// 		});
 
-						let user = this.tarefaForm.listaUsuarios.find((u) => {
+				// 		let user = this.tarefaForm.listaUsuarios.find((u) => {
 
-							if (u.email == usuario.email) {
-								return u;
-							}
+				// 			if (u.email == usuario.email) {
+				// 				return u;
+				// 			}
 
-							if (u.email == usuario.email_comercial) {
-								return u;
-							}
+				// 			if (u.email == usuario.email_comercial) {
+				// 				return u;
+				// 			}
 
-						});
+				// 		});
 
-						this.tarefaForm.usuario = user.email;
-					}).catch(error => {
-						console.log(error);
-					});
+				// 		this.tarefaForm.usuario = user.email;
+				// 	}).catch(error => {
+				// 		console.log(error);
+				// 	});
 			},
 			listartStatus: function(projetoId) {
 				this.gateway
@@ -1014,7 +1014,7 @@
 					<div class="col-2">
 						<select class="form-select" v-model="pontoForm.mes">
 							<option value="">Mês</option>
-							<option v-for="mes in pontoForm.meses" :value="mes.numero">@{{ mes.nome }}/@{{ mes.ano }}</option>
+							<option v-for="mes in pontoForm.meses" :value="mes.mes_ano">@{{ mes.nome }}/@{{ mes.ano }}</option>
 						</select>
 					</div>
 					<div class="col-1">
