@@ -19,9 +19,8 @@ class PontoRepository
 
 	public function get(array $data = [])
 	{
-		logger($data);
 		extract($data);
-		
+
 		$ordenacao = empty($ordenacao) ? 'desc' : $ordenacao;
 
 		return $this->model::with('horarios')
@@ -155,14 +154,16 @@ class PontoRepository
 
 	public function summarize($dados)
 	{
-
-		$mes = isset($dados['mes']) ? $dados['mes'] : date('m');
+		extract($dados);
 
 		$pontos = Ponto::query()
-			->when($dados['usuario_id'], function ($query) use ($dados) {
-				return $query->where('user_id', $dados['usuario_id']);
+			->where('user_id', $usuario_id)
+			->when($mes, function ($query, $paramMes) {
+				return $query->whereRaw('MONTH(dia) = ?', [$paramMes]);
 			})
-			->whereRaw('MONTH(dia) = ?', [$mes])
+			->when($ano, function ($query, $paramAno) {
+				return $query->whereRaw('YEAR(dia) = ?', [$paramAno]);
+			})
 			->get();
 
 		$summarize = [];

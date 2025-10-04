@@ -250,99 +250,6 @@
 			console.log(error);
 		});
 
-	// var appEscala = new Vue({
-	// 	el: '#escala-app',
-	// 	data: {
-	// 		gateway: new Gateway(),
-	// 		showModal: false,
-	// 		usuarioId: usuario.id,
-	// 		usuarioNome: usuario.name,
-	// 		feriados: [],
-	// 		escalas: [],
-	// 		escalaLoading: false,
-	// 		diasMes: []
-	// 	},
-	// 	methods: {
-	// 		listarEscalas: function() {
-	// 			this.gateway
-	// 				.get(`{{ route('api.v1.jobs.escalas.listar') }}`)
-	// 				.then((response) => {
-	// 					this.escalas = response.data;
-	// 				}).catch(error => {
-	// 					console.log(error);
-	// 				});
-	// 		},
-	// 		listarDiasMes: function() {
-	// 			let data = new Date('2025-05-01T00:00:00.000');
-	// 			for (let i = 1; i <= 30; i++) {
-	// 				// console.log(`${i}|${CalendarioHelper.getDayOfWeek(data.getDay())}|${data}`);
-	// 				// this.diasMes.push({
-	// 				// 	dia: data,
-	// 				// });
-	// 				data.setDate(data.getUTCDate() + 1);
-	// 			}
-	// 			// console.log(this.diasMes);
-	// 		}
-	// 	},
-	// 	computed: {},
-	// 	created: function() {
-	// 		this.listarEscalas();
-	// 		this.listarDiasMes();
-	// 	},
-	// });
-
-	var appCalendario = new Vue({
-		el: '#calendario-app',
-		data: {
-			gateway: new Gateway(),
-			calendario: {
-				hoje: {
-					dia: '',
-					mes: '',
-					ano: ''
-				},
-				qtdDiasMes: 0,
-				qtdDiasAteFimMes: 0,
-				qtdDiasAtePagamento: 0,
-			},
-			relogio: {
-				hora: 1,
-				minuto: 2,
-				segundo: 3,
-			},
-			calendarioLoading: true,
-		},
-		methods: {
-			carregarCalendario: function() {
-				this.calendarioLoading = true;
-				this.gateway
-					.get(`{{ route('api.v1.jobs.calendario.exibir') }}`)
-					.then((response) => {
-						this.calendario = response.data;
-						this.calendarioLoading = false;
-					})
-					.catch(error => {
-						console.log(error);
-					});
-			}
-		},
-		computed: {},
-		created: function() {
-			this.carregarCalendario();
-		},
-		mounted: function() {
-			setInterval(() => {
-				let date = new Date();
-				let hora = date.getHours();
-				let minuto = date.getMinutes();
-				let segundo = date.getSeconds();
-				this.relogio.hora = hora < 10 ? `0${hora}` : hora;
-				this.relogio.minuto = minuto < 10 ? `0${minuto}` : minuto;
-				this.relogio.segundo = segundo < 10 ? `0${segundo}` : segundo;
-			}, 1000);
-		}
-	});
-
 	var appPonto = new Vue({
 		el: '#ponto-app',
 		data: {
@@ -431,7 +338,7 @@
 							usuarioId: '{{ $dados->usuario->id }}',
 							observacao: '',
 							pedir_ajuste: false,
-							mes: objDate.getMonth() + 1,
+							mes: objDate.getFullYear() + '-' + (objDate.getMonth() + 1),
 						};
 						this.buscarMeses();
 						this.listar();
@@ -494,15 +401,16 @@
 					});
 			},
 			resumo: function() {
-				let month = (new Date()).getMonth() + 1;
+				let hoje = new Date();
+				let month = hoje.getMonth() + 1;
+				let year = hoje.getFullYear();
 
 				if (this.pontoForm.mes) {
-					month = this.pontoForm.mes;
-					month = month < 10 ? `0${month}` : month;
+					[year, month] = this.pontoForm.mes.split('-');
 				}
 
 				this.gateway
-					.get(`{{ route('api.v1.jobs.pontos.resumo') }}?mes=${month}&usuario_id=${this.pontoForm.usuarioId}`)
+					.get(`{{ route('api.v1.jobs.pontos.resumo') }}?mes=${month}&ano=${year}&usuario_id=${this.pontoForm.usuarioId}`)
 					.then((response) => {
 						this.resumos = response.data;
 					})
@@ -535,6 +443,7 @@
 			}, 1000);
 		}
 	});
+
 	// register modal component
 	Vue.component("modal", {
 		template: "#modal-template"

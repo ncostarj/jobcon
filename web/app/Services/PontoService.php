@@ -69,6 +69,8 @@ class PontoService extends BaseService
 		// ['mes' => date('m'), 'usuario_id' => User::where('name', 'Newton Gonzaga Costa')->first()->id]
 		foreach ($this->repository->get($dados) as $ponto) {
 
+			logger("{$ponto->debito}|{$ponto->credito}");
+
 			if($ponto->debito != '00:00') {
 				$addDebito = '+';
 
@@ -106,7 +108,7 @@ class PontoService extends BaseService
 		$debito = date('H:i', $debito);
 		$credito = date('H:i', $credito);
 
-		// Log::info("{$debito}|{$credito}");
+		logger("{$debito}|{$credito}");
 
 		return $this->defaultReponse(200, '', (object) compact('debito', 'credito'));
 	}
