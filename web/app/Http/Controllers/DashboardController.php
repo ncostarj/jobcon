@@ -22,11 +22,9 @@ class DashboardController extends Controller
 		// 	return Redirect::to($spotifyResponse['url']);
 		// }
 
-		$usuario = session()->get('usuario');
-
 		$dados = (object) [
 			'projeto' => env('JIRA_PROJECT_ID'),
-			'usuario' => $usuario,
+			'usuario' => auth()->user(),
 			'icons' => (object) [
 				'entrada' => 'bi bi-arrow-right-circle-fill',
 				'almoco_saida' => 'bi bi-pause-circle-fill',

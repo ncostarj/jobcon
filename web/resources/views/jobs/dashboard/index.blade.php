@@ -93,36 +93,6 @@
 @endsection
 
 @section('script')
-<script type="text/x-template" id="modal-template">
-	<transition name="modal">
-        <div class="modal-mask">
-          <div class="modal-wrapper">
-            <div class="modal-container">
-
-              <div class="modal-header">
-                <slot name="header">
-                  default header
-                </slot>
-              </div>
-
-              <div class="modal-body">
-                <slot name="body">
-                  default body
-                </slot>
-              </div>
-
-              <div class="modal-footer">
-                <slot name="footer">
-                  <button class="modal-default-button" @click="$emit('close')">
-                    Fechar
-                  </button>
-                </slot>
-              </div>
-            </div>
-          </div>
-        </div>
-    </transition>
-</script>
 
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.17/locales-all.global.min.js'></script>
@@ -442,11 +412,6 @@
 				this.relogio.segundo = segundo < 10 ? `0${segundo}` : segundo;
 			}, 1000);
 		}
-	});
-
-	// register modal component
-	Vue.component("modal", {
-		template: "#modal-template"
 	});
 
 	var appTarefas = new Vue({
@@ -817,6 +782,7 @@
 		},
 	});
 </script>
+
 @endsection
 
 @section('content')
