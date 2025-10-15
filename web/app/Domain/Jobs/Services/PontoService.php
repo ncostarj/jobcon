@@ -19,11 +19,11 @@ class PontoService implements ServiceInterface
 	public function search(array $criteria = []): Collection
 	{
 		$teste = $this->repository->search($criteria);
-		logger($teste);
+		// logger($teste);
 		return $teste;
 	}
 
-	public function find(int $id): ?Ponto
+	public function find(string $id): ?Ponto
 	{
 		return $this->repository->find($id);
 	}
@@ -33,12 +33,12 @@ class PontoService implements ServiceInterface
 		return $this->repository->create($data);
 	}
 
-	public function update(int $id, array $data): bool
+	public function update(string $id, array $data): bool
 	{
 		return $this->repository->update($id, $data);
 	}
 
-	public function delete(int $id): bool
+	public function delete(string $id): bool
 	{
 		return $this->repository->delete($id);
 	}

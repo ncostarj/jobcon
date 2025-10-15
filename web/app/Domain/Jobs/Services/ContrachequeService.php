@@ -4,6 +4,7 @@ namespace App\Domain\Jobs\Services;
 
 use App\Domain\Jobs\Interfaces\ServiceInterface;
 use App\Domain\Jobs\Models\Contracheque;
+use App\Domain\Jobs\Repositories\ContrachequeRepository;
 use Illuminate\Support\Collection;
 
 class ContrachequeService implements ServiceInterface
@@ -11,7 +12,7 @@ class ContrachequeService implements ServiceInterface
 
 	protected $repository;
 
-	public function __construct(ServiceInterface $repository)
+	public function __construct(ContrachequeRepository $repository)
 	{
 		$this->repository = $repository;
 	}
@@ -21,7 +22,7 @@ class ContrachequeService implements ServiceInterface
 		return $this->repository->search($criteria);
 	}
 
-	public function find(int $id): ?Contracheque
+	public function find(string $id): ?Contracheque
 	{
 		return $this->repository->find($id);
 	}
@@ -31,15 +32,19 @@ class ContrachequeService implements ServiceInterface
 		return $this->repository->create($data);
 	}
 
-	public function update(int $id, array $data): bool
+	public function update(string $id, array $data): bool
 	{
 		return $this->repository->update($id, $data);
 	}
 
-	public function delete(int $id): bool
+	public function delete(string $id): bool
 	{
 		return $this->repository->delete($id);
-	}	
+	}
+
+	public function getYears(array $criteria) : Collection {
+		return $this->repository->getYears($criteria);
+	}
 
 	// public function get(array $dados = [])
 	// {

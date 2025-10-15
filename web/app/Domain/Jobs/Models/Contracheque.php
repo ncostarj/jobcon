@@ -42,6 +42,10 @@ class Contracheque extends Model
 		return number_format($valor, 2, ',', '.');
 	}
 
+	public function getCompetenciaFormattedAttribute() {
+		return $this->competencia->format('Y-m-d');
+	}
+
 	public function getSalarioBaseFormattedAttribute()
 	{
 		return 'R$ ' . $this->formatMoney($this->salario_base);

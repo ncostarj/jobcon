@@ -7,8 +7,8 @@ use Illuminate\Support\Collection;
 
 interface ServiceInterface {
     public function search(array $criteria): Collection;
-    public function find(int $id): ?Model;
+    public function find(string $id): ?Model;
     public function create(array $data): Model;
-    public function update(int $id, array $data): bool;
-    public function delete(int $id): bool;
+    public function update(string $id, array $data): bool;
+    public function delete(string $id): bool;
 }

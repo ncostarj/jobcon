@@ -39,7 +39,7 @@
 			@method('PUT')
 			@endif
 			@csrf
-			<input type="hidden" name="usuario_id" value="{{ $usuario_id }}" />
+			<input type="hidden" name="usuario_id" value="{{ $usuario->id }}" />
 			<div class="row">
 				<div class="col">
 					<div class="form-floating mb-3">

@@ -1,38 +1,44 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Domain\Jobs\Models\Empresa;
+use App\Domain\Jobs\Resources\AnoResource;
+use App\Domain\Jobs\Resources\ContrachequeResource;
 use App\Domain\Jobs\Services\ContrachequeService;
-use App\Http\Requests\ContrachequeRequest;
+use App\Http\Controllers\Api\BaseApiController;
 use Illuminate\Http\Request;
+use Throwable;
 
-class ContrachequeController extends Controller
-//  implements ControllerInterface
+class ContrachequeController extends BaseApiController
 {
 	public function index(ContrachequeService $contrachequeService, Request $request)
 	{
-		return view('jobs.contracheques.index', ['contracheques' => $contrachequeService->search($request->all() + ['usuario_id' => auth()->user()->id])]);
+		try {
+			$response = $this->response(200, trans('api.200'), ContrachequeResource::toArray($contrachequeService->search($request->all())));
+		} catch (\Throwable $th) {
+			$this->log($th);
+			$response = $this->response(500, trans('api.500'));
+		}
+		return $response;
 	}
 
-	// TODO buscar empresas pelo EmpresaService
-	public function create()
+	public function indexAnos(ContrachequeService $contrachequeService, Request $request)
 	{
-		return view('jobs.contracheques.form', [
-			'usuario' => auth()->user(),
-			'empresas' => Empresa::where('user_id', auth()->user()->id)->get(),
-			'action' => route('jobs.contracheques.store')
-		]);
+		try {
+			$response = $this->response(200, 'Sucesso', AnoResource::toArray($contrachequeService->getYears($request->all())));
+		} catch (\Throwable $th) {
+			$this->log($th);
+			$response = $this->response(500, 'Falha');
+		}
+		return $response;
 	}
 
-	public function edit(string $id, ContrachequeService $contrachequeService, Request $request)
+	public function edit(int $id, ContrachequeService $contrachequeService, Request $request)
 	{
-		return view('jobs.contracheques.form', [
-			'usuario' => auth()->user(),
-			'empresas' => Empresa::all(),
-			'contracheque' => $contrachequeService->find($id),
-			'action' => route('jobs.contracheques.update', ['contracheque' => $id]),
-		]);
+		$usuario = auth()->user();
+		$contracheque = $contrachequeService->find($id);
+		$action = route('jobs.contracheques.update', ['contracheque' => $contracheque->id]);
+		return view('jobs.contracheques.form', compact('action', 'empresas', 'contracheque', 'usuario_id'));
 	}
 
 	public function store(ContrachequeService $contrachequeService, ContrachequeRequest $request)
@@ -41,19 +47,25 @@ class ContrachequeController extends Controller
 		return redirect()->route('jobs.contracheques.index');
 	}
 
-	public function update(string $id, ContrachequeService $contrachequeService, ContrachequeRequest $request)
+	public function update(int $id, ContrachequeService $contrachequeService, ContrachequeRequest $request)
 	{
 		$contrachequeService->update($id, $request->validated());
 		return redirect()->route('jobs.contracheques.index');
 	}
 
-	public function destroy(string $id, ContrachequeService $contrachequeService)
+	public function destroy(int $id, ContrachequeService $contrachequeService)
 	{
 		$contrachequeService->delete($id);
 		return redirect()->route('jobs.contracheques.index');
 	}
 
-
+	private function log(Throwable $th) {
+		$error  = <<<TEXT
+		{$th->getFile()}:{$th->getLine()}
+		{$th->getMessage()}
+		TEXT;
+		logger($error);
+	}
 
 	// public function index(Request $request)
 	// {

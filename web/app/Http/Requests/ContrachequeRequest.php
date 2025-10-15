@@ -15,6 +15,7 @@ class ContrachequeRequest extends FormRequest
     public function rules()
     {
         return [
+			'usuario_id' => 'required',
             'empresa_id' => 'required|uuid',
 			'competencia' => 'required',
 			'tipo' => 'required',

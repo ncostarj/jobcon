@@ -20,7 +20,7 @@ class PontoRepository implements RepositoryInterface
 		return $this->model->all();
 	}
 
-	public function find(int $id): ?Ponto
+	public function find(string $id): ?Ponto
 	{
 		return $this->model->findOrFail($id);
 	}
@@ -30,13 +30,13 @@ class PontoRepository implements RepositoryInterface
 		return $this->model->create($data);
 	}
 
-	public function update(int $id, array $data): bool
+	public function update(string $id, array $data): bool
 	{
 		$ponto = $this->find($id);
 		return $ponto->update($data);
 	}
 
-	public function delete(int $id): bool
+	public function delete(string $id): bool
 	{
 		$ponto = $this->find($id);
 		return $ponto->delete();

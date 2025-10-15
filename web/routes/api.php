@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\Jobs\Services\PontoService;
+use App\Http\Controllers\Api\ContrachequeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,7 +39,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 		});
 
 		Route::prefix('pontos')->name('pontos.')->group(function () {
-			
+
 			Route::name('listar')->get('listar', [ PontoService::class, 'search' ]);
 
 			// Route::name('listar')->get('listar', function (Request $request, PontoService $pontoService) {
@@ -127,13 +128,8 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 		});
 
 		Route::prefix('contracheques')->name('contracheques.')->group(function(){
-			Route::name('listar')->get('listar', function (Request $request, ContrachequeService $contrachequeService) {
-				return $contrachequeService->get($request->all());
-			});
-
-			Route::name('buscar_anos')->get('buscar_anos', function(Request $request, ContrachequeService $contrachequeService) {
-				return $contrachequeService->searchYears($request->all());
-			});
+			Route::name('listar')->get('listar', [ ContrachequeController::class, 'index' ]);
+			Route::name('listar_anos')->get('listar_anos', [ ContrachequeController::class, 'indexAnos' ]);
 		});
 	});
 

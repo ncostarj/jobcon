@@ -4,15 +4,19 @@ namespace App\Domain\Jobs\Services;
 
 use Illuminate\Http\JsonResponse;
 
-abstract class BaseService
-{
-	protected $response;
+// abstract class BaseService
+// {
+// 	protected $response;
 
-	public function defaultReponse($status, $message, $data) : JsonResponse {
-		return response()->json([
-			'status' => $status,
-			'message' => $message,
-			'data' => $data
-		]);
-	}
+// 	public function defaultReponse($status, $message, $data) : JsonResponse {
+// 		return response()->json([
+// 			'status' => $status,
+// 			'message' => $message,
+// 			'data' => $data
+// 		]);
+// 	}
+// }
+
+class BaseService {
+
 }

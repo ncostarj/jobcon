@@ -6,8 +6,8 @@ services:
     working_dir: /var/www/newton/jobcon
     # extra_hosts:
     #   - "jobcon.homelab=127.0.0.1"
-    # ports:
-    #   - 8083:80
+    ports:
+      - 8083:80
     volumes:
       - .:/var/www/newton/jobcon
       - ./docker/config/nginx/sites-available:/etc/nginx/sites-available

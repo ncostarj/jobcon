@@ -322,7 +322,7 @@
 					});
 			},
 			listar: function() {
-				this.pontoLoading = true;
+				// this.pontoLoading = true;
 				let hoje = new Date();
 				let month = hoje.getMonth() + 1;
 				let year = hoje.getFullYear();
@@ -334,8 +334,8 @@
 				this.gateway
 					.get(`{{ route('api.v1.jobs.pontos.listar') }}?mes=${month}&ano=${year}&usuario_id=${this.pontoForm.usuarioId}&ordenacao=${this.pontoForm.ordenacao??''}`)
 					.then((response) => {
-						this.pontoLoading = false;
-						console.log(response);
+						// this.pontoLoading = false;
+						// console.log(response);
 						this.listaPontos = response.data;
 						// this.calcularSubtotal();
 					})
@@ -405,15 +405,15 @@
 			// this.carregarCalendario();
 		},
 		mounted: function() {
-			setInterval(() => {
-				let date = new Date();
-				let hora = date.getHours();
-				let minuto = date.getMinutes();
-				let segundo = date.getSeconds();
-				this.relogio.hora = hora < 10 ? `0${hora}` : hora;
-				this.relogio.minuto = minuto < 10 ? `0${minuto}` : minuto;
-				this.relogio.segundo = segundo < 10 ? `0${segundo}` : segundo;
-			}, 1000);
+			// setInterval(() => {
+			// 	let date = new Date();
+			// 	let hora = date.getHours();
+			// 	let minuto = date.getMinutes();
+			// 	let segundo = date.getSeconds();
+			// 	this.relogio.hora = hora < 10 ? `0${hora}` : hora;
+			// 	this.relogio.minuto = minuto < 10 ? `0${minuto}` : minuto;
+			// 	this.relogio.segundo = segundo < 10 ? `0${segundo}` : segundo;
+			// }, 1000);
 		}
 	});
 
@@ -693,8 +693,6 @@
 		},
 	});
 
-
-
 	var appContracheques = new Vue({
 		el: '#contracheques-app',
 		data: {
@@ -702,6 +700,7 @@
 			usuarioId: '{{ $dados->usuario->id }}',
 			contrachequeForm: {
 				ano: '',
+				ordem: '',
 			},
 			listaContracheques: [],
 			listaAnos: [],
@@ -716,8 +715,11 @@
 				this.contrachequeLoading = true;
 				let objDate = new Date();
 				let ano = this.contrachequeForm.ano ? this.contrachequeForm.ano : objDate.getFullYear();
+				let ordem = this.contrachequeForm.ordem ? this.contrachequeForm.ordem : 'desc';
+				let params = `usuario_id=${this.usuarioId}&ano=${ano}&ordem=${ordem}`;
+
 				this.gateway
-					.get(`{{ route('api.v1.jobs.contracheques.listar') }}?usuario_id=${this.usuarioId}&ano=${ano}`)
+					.get(`{{ route('api.v1.jobs.contracheques.listar') }}?${params}`)
 					.then((response) => {
 						this.listaContracheques = response.data;
 						this.contrachequeLoading = false;
@@ -726,11 +728,12 @@
 					});
 			},
 			listarAnos: function() {
-				let objDate = new Date();
-				let ano = objDate.getFullYear();
+				let params = `usuario_id=${this.usuarioId}`;
+
 				this.gateway
-					.get(`{{ route('api.v1.jobs.contracheques.buscar_anos') }}?usuario_id=${this.usuarioId}&ano=${ano}`)
+					.get(`{{ route('api.v1.jobs.contracheques.listar_anos') }}?${params}`)
 					.then((response) => {
+						console.log(response);
 						this.listaAnos = response.data;
 						this.contrachequeForm.ano = ano;
 					}).catch(error => {
@@ -740,8 +743,8 @@
 		},
 		computed: {},
 		created: function() {
-			// this.listarAnos();
-			// this.listar();
+			this.listar();
+			this.listarAnos();
 		},
 	});
 
@@ -826,7 +829,7 @@
 				<div class="row">
 					<div class="col d-flex justify-content-between align-items-start">
 						<h1 class="card-title"><i class="bi bi-alarm"></i>Ponto</h1>
-						<h1 v-if="!calendarioLoading">
+						<h1>
 							@{{ calendario.hoje.diaDaSemana }}
 							@{{ calendario.hoje.dia }} de @{{ calendario.hoje.mes }} de @{{ calendario.hoje.ano }}
 							<span>@{{ relogio.hora }}:@{{ relogio.minuto }}:@{{ relogio.segundo }}</span>
@@ -879,7 +882,7 @@
 
 				<div class="row">
 
-					<div class="col-3" v-if="!calendarioLoading">
+					<div class="col-3">
 						<h1>@{{ calendario.hoje.mes }} tem</h1>
 						<ul class="list-group mb-5">
 							<li class="list-group-item">@{{ calendario.qtdDiasMes }} dias</li>
@@ -1161,10 +1164,10 @@
 						</select>
 					</div>
 					<div class="col-3">
-						<select class="form-select">
+						<select class="form-select" v-model="contrachequeForm.ordem">
 							<option value="">Ordem</option>
-							<option value="asc">Decrescente</option>
-							<option value="desc">Crescente</option>
+							<option value="desc">Decrescente</option>
+							<option value="asc">Crescente</option>
 						</select>
 					</div>
 					<div class="col-3">
@@ -1177,7 +1180,6 @@
 					<tr>
 						<th><i class=" fs-5" :class="[ isEsconder ? 'bi bi-eye-slash' : 'bi bi-eye' ]" @click="toggleVisualizacao()"></i></th>
 						<th>Competência</th>
-						<th>Tipo</th>
 						<th>Base</th>
 						<th>Liquido</th>
 						<th>Vencimentos</th>
@@ -1195,9 +1197,6 @@
 						<td><a :href="contracheque.link"><i class="bi bi-pencil-fill" title="Ajustar"></i></a></td>
 						<td>
 							<span>@{{ contracheque.competencia_extenso }}</span>
-						</td>
-						<td>
-							<span>@{{ contracheque.tipo }}</span>
 						</td>
 						<td>
 							<span v-if="isEsconder">***</span>

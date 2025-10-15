@@ -1,59 +1,54 @@
 <?php
 
-namespace App\Resources;
+namespace App\Domain\Jobs\Resources;
 
-use App\Models\Common\MyCalendar;
+use Illuminate\Support\Collection;
 
 class ContrachequeResource
 {
-
-	protected $calendar;
-	protected $resources;
-
-	public function __construct($resources)
-	{
-		$this->calendar = new MyCalendar;
-		$this->resources = $resources;
-	}
-
-	private function getCompetenciaExtenso($dataCompetencia)
+	private static function getCompetenciaExtenso($dataCompetencia, $tipo)
 	{
 		[$ano, $mes, $dia] = explode('-', $dataCompetencia);
-		return "{$this->calendar->getMes($mes)}/{$ano}";
+
+		switch($mes) {
+			case '01': $competenciaExtenso = 'Jan'; break;
+			case '02': $competenciaExtenso = 'Fev'; break;
+			case '03': $competenciaExtenso = 'Mar'; break;
+			case '04': $competenciaExtenso = 'Abr'; break;
+			case '05': $competenciaExtenso = 'Mai'; break;
+			case '06': $competenciaExtenso = 'Jun'; break;
+			case '07': $competenciaExtenso = 'Jul'; break;
+			case '08': $competenciaExtenso = 'Ago'; break;
+			case '09': $competenciaExtenso = 'Set'; break;
+			case '10': $competenciaExtenso = 'Out'; break;
+			case '11': $competenciaExtenso = 'Nov'; break;
+			case '12': $competenciaExtenso = 'Dez'; break;
+			default: $competenciaExtenso = '';
+		}
+
+		return "{$competenciaExtenso}/{$ano} {$tipo}";
 	}
 
-	public function toObject($resource)
+	public static function toArray(Collection $collection)
 	{
-		$competencia = $resource->competencia->format('Y-m-d');
-		return (object) [
-			'id' => $resource->id,
-			'competencia' => $competencia,
-			'competencia_extenso' => $this->getCompetenciaExtenso($competencia),
-			'tipo' => $resource->tipo,
-			'salario_base' => $resource->salario_base,
-			'salario_base_formatado' => $resource->salario_base_formatted,
-			'salario_liquido' => $resource->salario_liquido,
-			'salario_liquido_formatado' => $resource->salario_liquido_formatted,
-			'total_vencimentos' => $resource->total_vencimentos,
-			'total_vencimentos_formatado' => $resource->total_vencimentos_formatted,
-			'total_descontos' => $resource->total_descontos,
-			'total_descontos_formatado' => $resource->total_descontos_formatted,
-			'total_liquido' => round($resource->total_liquido, 2),
-			'total_liquido_formatado' => $resource->total_liquido_formatted,
-			'comprovante' => $resource->comprovante,
-			'link' => route('jobs.contracheques.edit', [ 'contracheque' => $resource->id ]),
-		];
-	}
-
-	public function toArray()
-	{
-		return $this->resources->map(function ($resource) {
-			return $this->toObject($resource);
-		});
-	}
-
-	public function toJson()
-	{
-		return json_encode($this->toArray());
+		return $collection->map(function ($item) {
+			return [
+				'id' => $item->id,
+				'competencia' => $item->competencia_formatted,
+				'competencia_extenso' => self::getCompetenciaExtenso($item->competencia_formatted, $item->tipo),
+				'salario_base' => $item->salario_base,
+				'salario_base_formatado' => $item->salario_base_formatted,
+				'salario_liquido' => $item->salario_liquido,
+				'salario_liquido_formatado' => $item->salario_liquido_formatted,
+				'total_vencimentos' => $item->total_vencimentos,
+				'total_vencimentos_formatado' => $item->total_vencimentos_formatted,
+				'total_descontos' => $item->total_descontos,
+				'total_descontos_formatado' => $item->total_descontos_formatted,
+				'total_liquido' => round($item->total_liquido, 2),
+				'total_liquido_formatado' => $item->total_liquido_formatted,
+				'comprovante' => $item->comprovante,
+				'link' => route('jobs.contracheques.edit', ['contracheque' => $item->id]),
+			];
+		})->toArray();
 	}
 }
