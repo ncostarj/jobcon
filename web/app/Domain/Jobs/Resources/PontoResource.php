@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Resources;
+namespace App\Domain\Jobs\Resources;
 
-use App\Models\Common\MyCalendar;
+use App\Domain\Shared\Common\MyCalendar;
 use App\Models\Ponto;
 use App\Models\Horario;
 use Illuminate\Support\Facades\Log;

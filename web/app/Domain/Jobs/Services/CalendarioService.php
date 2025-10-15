@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services;
+namespace App\Domain\Jobs\Services;
 
-use App\Services\BaseService;
-use App\Models\Common\MyCalendar;
+use App\Domain\Jobs\Services\BaseService;
+use App\Domain\Shared\Common\MyCalendar;
 
 class CalendarioService extends BaseService
 {

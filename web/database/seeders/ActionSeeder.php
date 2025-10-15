@@ -54,7 +54,7 @@ class ActionSeeder extends Seeder
             ],
             [
                 'action_id' => 2,
-                'texto' => 'Contaracheques',
+                'texto' => 'Contracheques',
                 'url' => '/jobs/contracheques',
                 'route_name' => 'jobs.contracheques.index',
                 'ordem' => 3

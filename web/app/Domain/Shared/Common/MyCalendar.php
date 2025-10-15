@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Models\Common;
+namespace App\Domain\Shared\Common;
 
-use Illuminate\Support\Facades\Log;
 
 class MyCalendar
 {

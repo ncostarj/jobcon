@@ -9,6 +9,7 @@
 </div>
 <div class="row">
 	<div class="col">
+		<a href="{{ route('jobs.pontos.create') }}">Marcar</a>
 		<table class="table table-responsive">
 			<tr>
 				<td>Data</td>

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Domain\Jobs\Models;
 
-use App\Traits\Uuid;
+use App\Domain\Shared\Traits\Uuid;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;

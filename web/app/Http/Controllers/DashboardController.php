@@ -14,8 +14,9 @@ class DashboardController extends Controller
 {
 	//
 
-	public function index(Request $request,  SpotifyService $spotifyService)
+	public function index(Request $request)
 	{
+		// ,  SpotifyService $spotifyService
 		// $spotifyResponse = $spotifyService->test($request->code);
 
 		// if(!empty($spotifyResponse['url'])) {

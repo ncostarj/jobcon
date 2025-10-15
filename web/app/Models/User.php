@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use App\Traits\Uuid;
+use App\Domain\Jobs\Models\Role;
+use App\Domain\Shared\Traits\Uuid;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;

@@ -45,6 +45,7 @@ Route::group(['middleware' => 'auth'], function(){
 
 			Route::prefix('pontos')->name('pontos.')->group(function () {
 				Route::get('/', [ PontoController::class, 'index' ])->name('index');
+				Route::get('/criar', [ PontoController::class, 'create' ])->name('create');
 				Route::get('/editar/{ponto}', [ PontoController::class, 'edit' ])->name('edit');
 				Route::put('/{ponto}/atualizar', [ PontoController::class, 'update' ])->name('update');
 				Route::put('/{ponto}/apagar', [ PontoController::class, 'destroy' ])->name('destroy');

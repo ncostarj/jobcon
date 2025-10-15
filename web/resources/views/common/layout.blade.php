@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta http-equiv="refresh" content="3600" >
+		<meta http-equiv="refresh" content="900" >
         <title>{{ config('app.name') }} @yield('title')</title>
 
 		<link rel="icon" type="image/x-icon" href="{{ asset('favicon-16x16.png') }}">
@@ -25,7 +25,7 @@
 		<div class="container-fluid">
 			<div class="row">
 
-				<div class="menu col-2 closed">
+				<div class="menu col-3 closed">
 					@include('common.menu')
 				</div>
 

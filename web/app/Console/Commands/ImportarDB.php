@@ -50,6 +50,7 @@ class ImportarDB extends Command
 			$nomeTabela = preg_replace("/([0-9]{4}_[0-9]{2}_[0-9]{2}_[0-9]+_create_)(.*)(_table)/",'$2',$migration->migration);
 
 			if(in_array($nomeTabela, [
+				'roles','role_user','actions','action_role','audit',
 				"password_resets",
 				"failed_jobs",
 				"personal_access_tokens",

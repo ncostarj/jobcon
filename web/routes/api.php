@@ -1,15 +1,7 @@
 <?php
 
-use App\Models\Contracheque;
+use App\Domain\Jobs\Services\PontoService;
 use Illuminate\Http\Request;
-use App\Services\PontoService;
-use App\Services\FeriasService;
-use App\Models\Jira\JiraService;
-use App\Services\CalendarioService;
-use App\Services\FrequenciaService;
-use Illuminate\Support\Facades\Log;
-use App\Services\ContrachequeService;
-use App\Services\EscalaService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -46,6 +38,12 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 		});
 
 		Route::prefix('pontos')->name('pontos.')->group(function () {
+			
+			Route::name('listar')->get('listar', [ PontoService::class, 'search' ]);
+
+			// Route::name('listar')->get('listar', function (Request $request, PontoService $pontoService) {
+			// 	return $pontoService->get($request->all());
+			// });
 
 			Route::name('buscar_meses')->get('buscar_meses', function(Request $request, PontoService $pontoService){
 				return $pontoService->searchMonths($request->all());
@@ -55,9 +53,6 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 				return $pontoService->assign($request->all());
 			});
 
-			Route::name('listar')->get('listar', function (Request $request, PontoService $pontoService) {
-				return $pontoService->get($request->all());
-			});
 
 			Route::name('calcular_subtotal')->get('calcular/subtotal', function (Request $request, PontoService $pontoService) {
 				return $pontoService->sumHours($request->all());
