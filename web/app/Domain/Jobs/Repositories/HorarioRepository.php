@@ -4,6 +4,7 @@ namespace App\Domain\Jobs\Repositories;
 
 use App\Domain\Jobs\Interfaces\RepositoryInterface;
 use App\Domain\Jobs\Models\Horario;
+use App\Domain\Jobs\Models\Ponto;
 use App\Models\User;
 use Illuminate\Support\Collection;
 
@@ -11,25 +12,17 @@ class HorarioRepository implements RepositoryInterface
 {
 	protected $model;
 
-	public function __construct(Horario $ponto)
+	public function __construct(Horario $horario)
 	{
-		$this->model = $ponto;
+		$this->model = $horario;
 	}
 
 	public function search(array $criteria): Collection
 	{
 		return $this->model
-			->where('user_id', $criteria['usuario_id'])
-			->when($criteria['dia']??false, function($query, $dia) {
-				return $query->where('dia', $dia);
-			})
-			->when($criteria['mes'] ?? false, function ($query, $mes) {
-				return $query->whereRaw('MONTH(dia) = ?', [$mes]);
-			})
-			->when($criteria['ano'] ?? false, function ($query, $ano) {
-				return $query->whereRaw('YEAR(dia) = ?', [$ano]);
-			})
-			->orderBy('dia', $criteria['ordem'] ?? 'desc')
+			->when($criteria['ponto_id']??false, fn($query, $ponto_id) => $query->where('ponto_id', $ponto_id))
+			->when($criteria['hora']??false, fn($query, $hora) => $query->where('ponto_id', $hora))
+			->orderBy('hora', 'asc')
 			->get();
 	}
 
@@ -40,44 +33,9 @@ class HorarioRepository implements RepositoryInterface
 
 	public function create(array $data): Horario
 	{
-
-		dump('123');
-
-		$mass = collect($data);
-		dd($mass);
-		$massPonto = $mass->only('dia', 'categoria', 'pedir_ajuste', 'ajuste_finalizado', 'observacao_dia')->toArray();
-		$massPonto['observacao'] = $massPonto['observacao_dia'];
-		unset($massPonto['observacao_dia']);
-
-		$model = $this->model->fill($massPonto);
-		$model->usuario()->associate(User::where('id', $mass->get('usuario_id'))->first());
+		$model = $this->model->fill($data);
+		$model->ponto()->associate(Ponto::where('dia', $data['dia'])->first());
 		$model->save();
-
-		if($mass->has('hora')) {
-
-		}
-
-		dd($model);
-
-		// $this->model->create($data);
-
-		dd(__LINE__);
-
-		// $massPonto['observacao'] = $massPonto['observacao_dia'];
-		// unset($massPonto['observacao_dia']);
-
-		// $model = $this->model->fill($massPonto);
-		// $model->usuario()->associate(User::where('id', $mass->get('usuario_id')));
-		// $model->save();
-
-		// logger([ $model->toJson() ]);
-
-		// if($mass->has('horario')) {
-
-		// 	$model->horario()->save();
-		// }
-
-
 		return $model;
 	}
 

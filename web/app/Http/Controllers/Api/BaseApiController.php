@@ -9,7 +9,7 @@ use Throwable;
 class BaseApiController extends Controller
 {
 
-	public function response(int $code, string $message, array $data = [])
+	public function response(int $code, string $message, $data = null)
 	{
 		return response([ 'code' => $code, 'message' => $message, 'data' => $data ], $code);
 	}

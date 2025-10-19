@@ -307,18 +307,14 @@
 				this.gateway
 					.post(rota, JSON.stringify(form))
 					.then((response) => {
-						console.log(response);
-						// this.pontoForm = {
-						// 	categoria: 'home_office',
-						// 	usuarioId: '{{ $dados->usuario->id }}',
-						// 	observacao: '',
-						// 	pedir_ajuste: false,
-						// 	mes: objDate.getFullYear() + '-' + (objDate.getMonth() + 1),
-						// };
-						// this.buscarMeses();
-						// this.listar();
-						// this.obterBancoHoras();
-						// this.calcularSubtotal();
+						this.pontoForm = {
+							categoria: 'home_office',
+							usuarioId: '{{ $dados->usuario->id }}',
+							observacao: '',
+							pedir_ajuste: false,
+							mes: objDate.getFullYear() + '-' + (objDate.getMonth() + 1),
+						};
+						this.listar();
 					})
 					.catch(error => {
 						console.error(error);
@@ -338,7 +334,6 @@
 					.get(`{{ route('api.v1.jobs.pontos.listar') }}?mes=${month}&ano=${year}&usuario_id=${this.pontoForm.usuarioId}&ordenacao=${this.pontoForm.ordenacao??''}`)
 					.then((response) => {
 						this.pontoLoading = false;
-						// console.log(response);
 						this.listaPontos = response.data;
 						// this.calcularSubtotal();
 					})
@@ -401,6 +396,7 @@
 			let mesAtual = hoje.getMonth() + 1;
 			let anoAtual = hoje.getFullYear();
 			this.pontoForm.mes = `${anoAtual}-${mesAtual}`;
+			this.pontoForm.ordenacao = 'desc';
 			// this.obterBancoHoras();
 			this.buscarMeses();
 			this.listar();
@@ -408,15 +404,15 @@
 			this.carregarCalendario();
 		},
 		mounted: function() {
-			// setInterval(() => {
-			// 	let date = new Date();
-			// 	let hora = date.getHours();
-			// 	let minuto = date.getMinutes();
-			// 	let segundo = date.getSeconds();
-			// 	this.relogio.hora = hora < 10 ? `0${hora}` : hora;
-			// 	this.relogio.minuto = minuto < 10 ? `0${minuto}` : minuto;
-			// 	this.relogio.segundo = segundo < 10 ? `0${segundo}` : segundo;
-			// }, 1000);
+			setInterval(() => {
+				let date = new Date();
+				let hora = date.getHours();
+				let minuto = date.getMinutes();
+				let segundo = date.getSeconds();
+				this.relogio.hora = hora < 10 ? `0${hora}` : hora;
+				this.relogio.minuto = minuto < 10 ? `0${minuto}` : minuto;
+				this.relogio.segundo = segundo < 10 ? `0${segundo}` : segundo;
+			}, 1000);
 		}
 	});
 
@@ -871,7 +867,7 @@
 							<option v-for="mes in pontoForm.meses" :value="mes.mes_ano">@{{ mes.nome }}/@{{ mes.ano }}</option>
 						</select>
 					</div>
-					<div class="col-1">
+					<div class="col-2">
 						<select class="form-select" v-model="pontoForm.ordenacao">
 							<option value="">Ordem</option>
 							<option value="desc">Decrescente</option>

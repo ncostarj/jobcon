@@ -2,61 +2,76 @@
 
 namespace App\Domain\Jobs\Services;
 
+use App\Domain\Jobs\DTOs\HorarioDTO;
+use App\Domain\Jobs\DTOs\PontoDTO;
 use App\Domain\Jobs\Interfaces\ServiceInterface;
 use App\Domain\Jobs\Models\Ponto;
+use App\Domain\Jobs\Repositories\HorarioRepository;
 use App\Domain\Jobs\Repositories\PontoRepository;
 use Illuminate\Support\Collection;
 
 class PontoService implements ServiceInterface
 {
-	protected $repository;
+	protected $pontoRepository;
+	protected $horarioRepository;
 
-	public function __construct(PontoRepository $repository)
+	public function __construct(PontoRepository $pontoRepository, HorarioRepository $horarioRepository)
 	{
-		$this->repository = $repository;
+		$this->pontoRepository = $pontoRepository;
+		$this->horarioRepository = $horarioRepository;
 	}
 
 	public function search(array $criteria = []): Collection
 	{
-		$teste = $this->repository->search($criteria);
+		$teste = $this->pontoRepository->search($criteria);
 		// logger($teste);
 		return $teste;
 	}
 
 	public function find(string $id): ?Ponto
 	{
-		return $this->repository->find($id);
+		return $this->pontoRepository->find($id);
 	}
 
 	public function create(array $data): Ponto
 	{
-		return $this->repository->create($data);
+		return $this->pontoRepository->create($data);
 	}
 
 	public function update(string $id, array $data): bool
 	{
-		return $this->repository->update($id, $data);
+		return $this->pontoRepository->update($id, $data);
 	}
 
 	public function delete(string $id): bool
 	{
-		return $this->repository->delete($id);
+		return $this->pontoRepository->delete($id);
 	}
 
 	public function assign(array $data): Ponto
 	{
-		$ponto = $this->repository->search([
-			'usuario_id' => $data['usuario_id'],
-			'dia' => $data['dia']
-		])->first();
+		$ponto = $this->pontoRepository
+			->search([
+				'usuario_id' => $data['usuario_id'],
+				'dia' => $data['dia']
+			])->first();
 
 		if (empty($ponto)) {
-			return $this->repository->create($data);
+			$pontoDTO = PontoDTO::fromArray($data);
+			return $this->pontoRepository->create($pontoDTO->toArray());
 		}
 
+		$horario = $this->horarioRepository->search([
+			'ponto_id' => $ponto->id,
+			'hora' => $data['hora']
+		])->first();
 
-		logger($data);
-		dd('-----parando');
+		if (empty($horario)) {
+			$horarioDTO = HorarioDTO::fromArray($data);
+			$this->horarioRepository->create($horarioDTO->toArray());
+		}
+
+		return $ponto;
 
 		// $ponto = $this->model::query()->where('dia', $data['dia'])->first();
 
@@ -158,12 +173,12 @@ class PontoService implements ServiceInterface
 
 	public function summarize(array $criteria)
 	{
-		return $this->repository->summarize($criteria);
+		return $this->pontoRepository->summarize($criteria);
 	}
 
 	public function getMonths(array $criteria): Collection
 	{
-		return $this->repository->getMonths($criteria);
+		return $this->pontoRepository->getMonths($criteria);
 	}
 
 	// public function get(array $data = [])

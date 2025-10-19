@@ -23,15 +23,9 @@ class PontoRepository implements RepositoryInterface
 	{
 		return $this->model
 			->where('user_id', $criteria['usuario_id'])
-			->when($criteria['dia'] ?? false, function ($query, $dia) {
-				return $query->where('dia', $dia);
-			})
-			->when($criteria['mes'] ?? false, function ($query, $mes) {
-				return $query->whereRaw('MONTH(dia) = ?', [$mes]);
-			})
-			->when($criteria['ano'] ?? false, function ($query, $ano) {
-				return $query->whereRaw('YEAR(dia) = ?', [$ano]);
-			})
+			->when($criteria['dia'] ?? false, fn($query, $dia) => $query->where('dia', $dia))
+			->when($criteria['mes'] ?? false, fn($query, $mes) => $query->whereRaw('MONTH(dia) = ?', [$mes]))
+			->when($criteria['ano'] ?? false, fn($query, $ano) => $query->whereRaw('YEAR(dia) = ?', [$ano]))
 			->orderBy('dia', $criteria['ordem'] ?? 'desc')
 			->get();
 	}
@@ -43,42 +37,21 @@ class PontoRepository implements RepositoryInterface
 
 	public function create(array $data): Ponto
 	{
-		$mass = collect($data);
-		dd($mass);
-		// $massPonto = $mass->only('dia', 'categoria', 'pedir_ajuste', 'ajuste_finalizado', 'observacao_dia')->toArray();
-		// $massPonto['observacao'] = $massPonto['observacao_dia'];
-		// unset($massPonto['observacao_dia']);
-
-		// $model = $this->model->fill($massPonto);
-		// $model->usuario()->associate(User::where('id', $mass->get('usuario_id'))->first());
-		// $model->save();
-
-		// if($mass->has('hora')) {
-		// 	$this->horarioRepository->
-		// }
-
-		// dd($model);
-
-		// // $this->model->create($data);
-
-		// dd(__LINE__);
-
-		// $massPonto['observacao'] = $massPonto['observacao_dia'];
-		// unset($massPonto['observacao_dia']);
-
-		// $model = $this->model->fill($massPonto);
-		// $model->usuario()->associate(User::where('id', $mass->get('usuario_id')));
-		// $model->save();
-
-		// logger([ $model->toJson() ]);
-
-		// if($mass->has('horario')) {
-
-		// 	$model->horario()->save();
-		// }
-
-
+		$model = $this->createPonto($data);
+		$this->createHorario($model, $data['horario']);
 		return $model;
+	}
+
+	private function createPonto(array $data) : Ponto{
+		$model = $this->model->fill($data);
+		$model->usuario()->associate(User::where('id', $data['user_id'])->first());
+		$model->save();
+		return $model;
+	}
+
+	private function createHorario(Ponto $model, array $horarioData) {
+		$horario = $this->horarioRepository->create($horarioData);
+		$model->horarios()->save($horario);
 	}
 
 	public function update(string $id, array $data): bool
@@ -113,7 +86,7 @@ class PontoRepository implements RepositoryInterface
 		return $this->model
 			->query()
 			->selectRaw('date_format(dia, "%m") as mes, date_format(dia, "%Y") as ano')
-			->when($criteria['usuario_id']??false, function ($query, $usuario_id) {
+			->when($criteria['usuario_id'] ?? false, function ($query, $usuario_id) {
 				return $query->where('user_id', $usuario_id);
 			})
 			->groupBy(DB::raw('date_format(dia, "%m"), date_format(dia, "%Y")'))

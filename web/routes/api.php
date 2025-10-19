@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Api\Controllers\CalendarioController;
+use App\Http\Controllers\Api\CalendarioController;
 use App\Http\Controllers\Api\ContrachequeController;
 use App\Http\Controllers\Api\PontoController;
 use Illuminate\Http\Request;
