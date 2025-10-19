@@ -1,5 +1,5 @@
 @extends('common.layout')
-@section('title', '- Ponto - Incluir')
+@section('title', '&raquo; Contracheque &raquo; Incluir')
 @section('script')
 <script type="text/javascript">
 	// var app = new Vue({
@@ -27,9 +27,10 @@
 @endsection
 @section('content')
 
-<div class="row">
-	<div class="col">
-		<h1 class="text-center">Contracheque</h1>
+<div class="row mt-2">
+	<div class="col text-center d-flex justify-content-between align-items-start">
+		<h1>Contracheques</h1>
+		<a href="{{ route('jobs.contracheques.index') }}" title="Voltar"><i class="bi bi-arrow-left fs-4"></i></a>
 	</div>
 </div>
 <div class="row" id="horarioApp">

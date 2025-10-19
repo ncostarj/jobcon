@@ -1,42 +1,74 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\PontoRequest;
 use App\Domain\Jobs\Models\Ponto;
-use App\Domain\Jobs\Models\Horario;
+use App\Domain\Jobs\Resources\PontoMesResource;
+use App\Domain\Jobs\Resources\PontoResource;
+use App\Domain\Jobs\Resources\PontoResumoResource;
+use App\Domain\Jobs\Services\PontoService;
+
 // use App\Models\Saudacao;
 // use App\Repositories\PontoRepository;
 // use App\Models\Slack\SlackNotification;
 // use App\Repositories\HorarioRepository;
 
-class PontoController extends Controller
+class PontoController extends BaseApiController
 {
-	//
-
-	public function index(Request $request)
+	public function index(PontoService $pontoService, Request $request)
 	{
+		try {
+			$response = $this->response(200, trans('api.200'), PontoResource::toArray($pontoService->search($request->all())));
+		} catch (\Throwable $th) {
+			$this->log($th);
+			$response = $this->response(500, trans('api.500'));
+		}
 
-		$icons = [
-			'home_office' => 'bi bi-house',
-			'presencial' => 'bi bi-building',
-			'entrada' => 'bi bi-arrow-right-circle-fill',
-			'almoco_saida' => 'bi bi-pause-circle-fill',
-			'almoco_retorno' => 'bi bi-play-circle-fill',
-			'saida' => 'bi bi-arrow-left-circle-fill'
-		];
-
-		$pontos = Ponto::with('horarios')->orderBy('dia','desc')->get();
-
-		return view('jobs.pontos.index', compact('pontos', 'icons'));
-
+		return $response;
 	}
 
-	public function create()
+	public function assign(PontoService $pontoService, PontoRequest $request)
 	{
-		return view('jobs.pontos.form');
+		try {
+			$response = $this->response(200, trans('api.200'), ['ponto' => $pontoService->assign($request->validated())]);
+		} catch (\Throwable $th) {
+			$this->log($th);
+			$response = $this->response(500, trans('api.500'));
+		}
+
+		return $response;
 	}
+
+	public function summarize(PontoService $pontoService, Request $request)
+	{
+		try {
+			$response = $this->response(200, trans('api.200'), PontoResumoResource::toArray($pontoService->summarize($request->all())));
+		} catch (\Throwable $th) {
+			$this->log($th);
+			$response = $this->response(500, trans('api.500'));
+		}
+
+		return $response;
+	}
+
+	public function indexMeses(PontoService $pontoService, Request $request)
+	{
+		try {
+			$response = $this->response(200, trans('api.200'), PontoMesResource::toArray($pontoService->getMonths($request->all())));
+		} catch (\Throwable $th) {
+			$this->log($th);
+			$response = $this->response(500, trans('api.500'));
+		}
+
+		return $response;
+	}
+
+	// public function create()
+	// {
+	// 	return view('jobs.pontos.form');
+	// }
 
 	// public function store(Request $request, PontoRepository $horarioRepository)
 	// {
@@ -59,7 +91,7 @@ class PontoController extends Controller
 		// $ponto->update($pontoData);
 
 		// if($request->has('entrada') && !empty($request->input('entrada'))) {
-        //     $horario = Horario::query()
+		//     $horario = Horario::query()
 		// 		->where([
 		// 			[ 'ponto_id', '=', $ponto->id ],
 		// 			[ 'tipo', '=', 'entrada' ]

@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Domain\Jobs\Resources\AnoResource;
 use App\Domain\Jobs\Resources\ContrachequeResource;
 use App\Domain\Jobs\Services\ContrachequeService;
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Requests\ContrachequeRequest;
 use Illuminate\Http\Request;
-use Throwable;
 
 class ContrachequeController extends BaseApiController
 {
@@ -25,7 +24,7 @@ class ContrachequeController extends BaseApiController
 	public function indexAnos(ContrachequeService $contrachequeService, Request $request)
 	{
 		try {
-			$response = $this->response(200, 'Sucesso', AnoResource::toArray($contrachequeService->getYears($request->all())));
+			$response = $this->response(200, 'Sucesso', $contrachequeService->getYears($request->all())->toArray());
 		} catch (\Throwable $th) {
 			$this->log($th);
 			$response = $this->response(500, 'Falha');
@@ -57,14 +56,6 @@ class ContrachequeController extends BaseApiController
 	{
 		$contrachequeService->delete($id);
 		return redirect()->route('jobs.contracheques.index');
-	}
-
-	private function log(Throwable $th) {
-		$error  = <<<TEXT
-		{$th->getFile()}:{$th->getLine()}
-		{$th->getMessage()}
-		TEXT;
-		logger($error);
 	}
 
 	// public function index(Request $request)

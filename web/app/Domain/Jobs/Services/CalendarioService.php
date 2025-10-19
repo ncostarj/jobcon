@@ -9,19 +9,23 @@ class CalendarioService extends BaseService
 {
 	protected $myCalendar;
 
-	public function __construct() {
-		$this->myCalendar = new MyCalendar();
+	public function __construct(MyCalendar $myCalendar) {
+		$this->myCalendar = $myCalendar;
 	}
 
-	public function showCalendario() {
-		return $this->defaultReponse(200,'Dados retornados com sucesso',$this->myCalendar->getData());
+	public function index() {
+		return $this->myCalendar->getData();
 	}
 
-	public function getCurrentWeek($dados) {
-		return $this->defaultReponse(200,'Dados retornados com sucesso',$this->myCalendar->getCurWeekInterval($dados));
-	}
+	// public function showCalendario() {
+	// 	return $this->defaultReponse(200,'Dados retornados com sucesso',$this->myCalendar->getData());
+	// }
 
-	public function getFeriados() {
-		return $this->defaultReponse(200,'Dados retornados com sucesso',$this->myCalendar->getFeriados());
-	}
+	// public function getCurrentWeek($dados) {
+	// 	return $this->defaultReponse(200,'Dados retornados com sucesso',$this->myCalendar->getCurWeekInterval($dados));
+	// }
+
+	// public function getFeriados() {
+	// 	return $this->defaultReponse(200,'Dados retornados com sucesso',$this->myCalendar->getFeriados());
+	// }
 }

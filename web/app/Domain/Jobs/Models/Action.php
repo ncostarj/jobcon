@@ -21,6 +21,6 @@ class Action extends Model
     ];
 
     public function subactions() {
-        return $this->hasMany(Action::class);
+        return $this->hasMany(Action::class)->orderBy('ordem', 'asc');
     }
 }

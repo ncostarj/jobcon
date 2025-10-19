@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Http\Requests\BaseRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
-class PontoRequest extends BaseRequest
+class PontoRequest extends FormRequest
 {
 
     /**
@@ -15,9 +15,14 @@ class PontoRequest extends BaseRequest
     public function rules()
     {
         return [
+			'usuario_id' => 'required:uuid',
+			'tipo' => 'required',
             'dia' => 'required:date',
+			'hora' => 'required:time',
 			'categoria' => 'required',
 			'pedir_ajuste' => 'required',
+			'observacao_dia' => 'sometimes',
+			'observacao_horario' => 'sometimes',
         ];
     }
 }

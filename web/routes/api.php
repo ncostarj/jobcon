@@ -1,7 +1,8 @@
 <?php
 
-use App\Domain\Jobs\Services\PontoService;
+use App\Http\Api\Controllers\CalendarioController;
 use App\Http\Controllers\Api\ContrachequeController;
+use App\Http\Controllers\Api\PontoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,9 +26,12 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 	Route::prefix('jobs')->name('jobs.')->group(function () {
 
 		Route::prefix('calendario')->name('calendario.')->group(function(){
-			Route::name('exibir')->get('/', function (Request $request, CalendarioService $calendarioService) {
-				return $calendarioService->showCalendario();
-			});
+
+			Route::name('index')->get('/', [ CalendarioController::class, 'index' ]);
+
+			// Route::name('index')->get('/', function (Request $request, CalendarioService $calendarioService) {
+			// 	return $calendarioService->showCalendario();
+			// });
 
 			Route::name('listar_semana_atual')->get('/listar_semana_atual', function(Request $request, CalendarioService $calendarioService) {
 				return $calendarioService->getCurrentWeek($request->all());
@@ -40,28 +44,17 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
 		Route::prefix('pontos')->name('pontos.')->group(function () {
 
-			Route::name('listar')->get('listar', [ PontoService::class, 'search' ]);
-
-			// Route::name('listar')->get('listar', function (Request $request, PontoService $pontoService) {
-			// 	return $pontoService->get($request->all());
-			// });
-
-			Route::name('buscar_meses')->get('buscar_meses', function(Request $request, PontoService $pontoService){
-				return $pontoService->searchMonths($request->all());
-			});
-
-			Route::name('marcar')->post('marcar', function (Request $request, PontoService $pontoService) {
-				return $pontoService->assign($request->all());
-			});
-
-
+			Route::name('listar')->get('listar', [ PontoController::class, 'index' ]);
+			Route::name('resumo')->get('resumo', [ PontoController::class, 'summarize' ]);
+			Route::name('marcar')->post('marcar', [ PontoController::class, 'assign' ]);
+			Route::name('listar_meses')->get('listar_meses', [ PontoController::class, 'indexMeses' ]);
 			Route::name('calcular_subtotal')->get('calcular/subtotal', function (Request $request, PontoService $pontoService) {
-				return $pontoService->sumHours($request->all());
+			// 	return $pontoService->sumHours($request->all());
 			});
 
-			Route::name('resumo')->get('resumo', function(Request $request, PontoService $pontoService) {
-				return $pontoService->summarize($request->all());
-			});
+			// Route::name('resumo')->get('resumo', function(Request $request, PontoService $pontoService) {
+			// 	return $pontoService->summarize($request->all());
+			// });
 		});
 
 		Route::prefix('frequencias')->name('frequencias.')->group(function(){

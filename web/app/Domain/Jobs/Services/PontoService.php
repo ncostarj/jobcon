@@ -43,8 +43,128 @@ class PontoService implements ServiceInterface
 		return $this->repository->delete($id);
 	}
 
+	public function assign(array $data): Ponto
+	{
+		$ponto = $this->repository->search([
+			'usuario_id' => $data['usuario_id'],
+			'dia' => $data['dia']
+		])->first();
+
+		if (empty($ponto)) {
+			return $this->repository->create($data);
+		}
 
 
+		logger($data);
+		dd('-----parando');
+
+		// $ponto = $this->model::query()->where('dia', $data['dia'])->first();
+
+		// if (empty($ponto)) {
+		// 	$ponto = new Ponto;
+		// 	$pontoData = [
+		// 		'dia' => $data['dia'],
+		// 		'categoria' => $data['categoria'],
+		// 	];
+
+		// 	if (!empty($data['pedir_ajuste'])) {
+		// 		$pontoData = array_merge($data, [
+		// 			'pedir_ajuste' => $data['pedir_ajuste'],
+		// 		]);
+		// 	}
+
+		// 	if (!empty($data['observacao'])) {
+		// 		$pontoData = array_merge($data, [
+		// 			'observacao' => $data['observacao']
+		// 		]);
+		// 	}
+
+		// 	$ponto->fill($pontoData);
+
+		// 	$ponto->usuario()->associate(User::where('id', $data['usuario_id'])->first());
+
+		// 	$ponto->save();
+
+		// 	$horario = Horario::query()
+		// 		->where('ponto_id', $ponto->id)
+		// 		->where('hora', $data['hora'])
+		// 		->first();
+
+		// 	if (empty($horario)) {
+		// 		$horario = (new Horario)
+		// 			->fill([
+		// 				"hora" => $data['hora'],
+		// 				"tipo" => $data['tipo'],
+		// 				// "observacao" => $data['observacao']
+		// 			]);
+
+		// 		$ponto->horarios()->save($horario);
+		// 	}
+		// }
+
+		// if (!empty($ponto)) {
+
+		// 	$pontoData = [];
+
+		// 	if (!empty($data['pedir_ajuste'])) {
+		// 		$pontoData = array_merge($data, [
+		// 			'pedir_ajuste' => $data['pedir_ajuste'],
+		// 		]);
+		// 	}
+
+		// 	if (!empty($data['observacao_dia'])) {
+		// 		$pontoData = array_merge($data, [
+		// 			'observacao' => $data['observacao_dia']
+		// 		]);
+		// 	}
+
+		// 	if (!empty($pontoData)) {
+		// 		$ponto
+		// 			->fill($pontoData)
+		// 			->save();
+		// 	}
+
+		// 	$horario = Horario::query()
+		// 		->where('ponto_id', $ponto->id)
+		// 		->where('tipo', $data['tipo'])
+		// 		->first();
+
+		// 	if (empty($horario)) {
+
+		// 		$horarioData = [
+		// 			"hora" => $data['hora'],
+		// 			"tipo" => $data['tipo'],
+		// 		];
+
+		// 		if (!empty($data['observacao_horario'])) {
+		// 			$horarioData = array_merge($horarioData, [
+		// 				"observacao" => $data['observacao_horario']
+		// 			]);
+		// 		}
+
+		// 		$horario = (new Horario)
+		// 			->fill($horarioData);
+
+		// 		$ponto->horarios()->save($horario);
+		// 	}
+		// }
+
+		// return $ponto;
+
+
+		// return Ponto::all()->first();
+
+	}
+
+	public function summarize(array $criteria)
+	{
+		return $this->repository->summarize($criteria);
+	}
+
+	public function getMonths(array $criteria): Collection
+	{
+		return $this->repository->getMonths($criteria);
+	}
 
 	// public function get(array $data = [])
 	// {

@@ -50,7 +50,7 @@ class ContrachequeController extends Controller
 	public function destroy(string $id, ContrachequeService $contrachequeService)
 	{
 		$contrachequeService->delete($id);
-		return redirect()->route('jobs.contracheques.index');
+		// return redirect()->route('jobs.contracheques.index');
 	}
 
 

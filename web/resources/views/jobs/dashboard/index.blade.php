@@ -217,7 +217,7 @@
 	// 			}
 	// 		})).render();
 	// 	}).catch(error => {
-	// 		console.log(error);
+	// 		console.error(error);
 	// 	});
 
 	var appPonto = new Vue({
@@ -227,8 +227,8 @@
 			pontoForm: {
 				categoria: 'home_office',
 				usuarioId: '{{ $dados->usuario->id }}',
-				observacaoDia: '',
-				observacaoHorario: '',
+				observacao_dia: '',
+				observacao_horario: '',
 				pedir_ajuste: false,
 				mes: '',
 				meses: [],
@@ -262,29 +262,27 @@
 			carregarCalendario: function() {
 				this.calendarioLoading = true;
 				this.gateway
-					.get(`{{ route('api.v1.jobs.calendario.exibir') }}`)
+					.get(`{{ route('api.v1.jobs.calendario.index') }}`)
 					.then((response) => {
+						console.log(response);
 						this.calendario = response.data;
 						this.calendarioLoading = false;
 					})
 					.catch(error => {
-						console.log(error);
+						console.error(error);
 					});
 			},
 			buscarMeses: function() {
-				let hoje = new Date();
 				this.gateway
-					.get(`{{ route('api.v1.jobs.pontos.buscar_meses') }}?usuario_id=${this.pontoForm.usuarioId}`)
+					.get(`{{ route('api.v1.jobs.pontos.listar_meses') }}?usuario_id=${this.pontoForm.usuarioId}`)
 					.then((response) => {
 						this.pontoForm.meses = response.data;
 					})
 					.catch(error => {
-						console.log(error);
+						console.error(error);
 					});
 			},
 			marcar: function(rota, tipo) {
-
-				console.log(rota);
 
 				if (!this.pontoForm.categoria) {
 					alert('O campo categoria precisa estar preenchido!');
@@ -297,28 +295,33 @@
 					"dia": objDate.toISOString().replace(/([0-9]{4})-([0-9]{2})-([0-9]{2})(.*)/, '$1-$2-$3'),
 					"hora": objDate.toTimeString().replace(/([0-9]{2}):([0-9]{2})(.*)/, '$1:$2'),
 					"categoria": this.pontoForm.categoria,
-					"observacao": this.pontoForm.observacao,
+					"observacao_dia": this.pontoForm.observacao_dia,
+					"observacao_horario": this.pontoForm.observacao_horario,
 					"tipo": tipo,
 					"pedir_ajuste": this.pontoForm.pedir_ajuste ? 1 : 0,
 				};
 
+				// console.log(this.pontoForm);
+				console.log(form);
+
 				this.gateway
 					.post(rota, JSON.stringify(form))
 					.then((response) => {
-						this.pontoForm = {
-							categoria: 'home_office',
-							usuarioId: '{{ $dados->usuario->id }}',
-							observacao: '',
-							pedir_ajuste: false,
-							mes: objDate.getFullYear() + '-' + (objDate.getMonth() + 1),
-						};
-						this.buscarMeses();
-						this.listar();
-						this.obterBancoHoras();
-						this.calcularSubtotal();
+						console.log(response);
+						// this.pontoForm = {
+						// 	categoria: 'home_office',
+						// 	usuarioId: '{{ $dados->usuario->id }}',
+						// 	observacao: '',
+						// 	pedir_ajuste: false,
+						// 	mes: objDate.getFullYear() + '-' + (objDate.getMonth() + 1),
+						// };
+						// this.buscarMeses();
+						// this.listar();
+						// this.obterBancoHoras();
+						// this.calcularSubtotal();
 					})
 					.catch(error => {
-						console.log(error);
+						console.error(error);
 					});
 			},
 			listar: function() {
@@ -334,13 +337,13 @@
 				this.gateway
 					.get(`{{ route('api.v1.jobs.pontos.listar') }}?mes=${month}&ano=${year}&usuario_id=${this.pontoForm.usuarioId}&ordenacao=${this.pontoForm.ordenacao??''}`)
 					.then((response) => {
-						// this.pontoLoading = false;
+						this.pontoLoading = false;
 						// console.log(response);
 						this.listaPontos = response.data;
 						// this.calcularSubtotal();
 					})
 					.catch(error => {
-						console.log(error);
+						console.error(error);
 					});
 
 				// this.resumo();
@@ -360,7 +363,7 @@
 						this.subtotalPontos = response.data;
 					})
 					.catch(error => {
-						console.log(error);
+						console.error(error);
 					});
 			},
 			obterBancoHoras: function() {
@@ -370,7 +373,7 @@
 						this.bancoHoras = response.data;
 					})
 					.catch(error => {
-						console.log(error);
+						console.error(error);
 					});
 			},
 			resumo: function() {
@@ -388,21 +391,21 @@
 						this.resumos = response.data;
 					})
 					.catch(error => {
-						console.log(error);
+						console.error(error);
 					});
 			}
 		},
 		computed: {},
 		created: function() {
-			// let hoje = new Date()
-			// let mesAtual = hoje.getMonth() + 1;
-			// let anoAtual = hoje.getFullYear();
-			// this.pontoForm.mes = `${anoAtual}-${mesAtual}`;
-			// this.resumo();
-			// this.buscarMeses();
+			let hoje = new Date()
+			let mesAtual = hoje.getMonth() + 1;
+			let anoAtual = hoje.getFullYear();
+			this.pontoForm.mes = `${anoAtual}-${mesAtual}`;
 			// this.obterBancoHoras();
+			this.buscarMeses();
 			this.listar();
-			// this.carregarCalendario();
+			this.resumo();
+			this.carregarCalendario();
 		},
 		mounted: function() {
 			// setInterval(() => {
@@ -467,7 +470,7 @@
 			// 			}
 
 			// 		}).catch(error => {
-			// 			console.log(error);
+			// 			console.error(error);
 			// 		});
 			// },
 			// listarUsuarios: function() {
@@ -494,7 +497,7 @@
 
 			// 	// 		this.tarefaForm.usuario = user.email;
 			// 	// 	}).catch(error => {
-			// 	// 		console.log(error);
+			// 	// 		console.error(error);
 			// 	// 	});
 			// },
 			// listartStatus: function(projetoId) {
@@ -507,7 +510,7 @@
 			// 				}
 			// 			});
 			// 		}).catch(error => {
-			// 			console.log(error);
+			// 			console.error(error);
 			// 		});
 			// },
 			// getTime: function(seconds) {
@@ -560,7 +563,7 @@
 			// 		.then((response) => {
 			// 			this.feriados = response.data;
 			// 		}).catch(error => {
-			// 			console.log(error);
+			// 			console.error(error);
 			// 		});
 			// },
 			// buscarTarefas: function() {
@@ -573,7 +576,7 @@
 			// 			this.organizarPorSemana(this.listaTarefas);
 			// 			this.tarefaLoading = false;
 			// 		}).catch(error => {
-			// 			console.log(error);
+			// 			console.error(error);
 			// 		});
 			// },
 			// getDayOfWeek: function(day) {
@@ -645,7 +648,7 @@
 			// 			} while (contador < 5);
 
 			// 		}).catch(error => {
-			// 			console.log(error);
+			// 			console.error(error);
 			// 		});
 			// }
 		},
@@ -724,20 +727,20 @@
 						this.listaContracheques = response.data;
 						this.contrachequeLoading = false;
 					}).catch(error => {
-						console.log(error);
+						console.error(error);
 					});
 			},
 			listarAnos: function() {
 				let params = `usuario_id=${this.usuarioId}`;
+				let ano = new Date().getFullYear();
 
 				this.gateway
 					.get(`{{ route('api.v1.jobs.contracheques.listar_anos') }}?${params}`)
 					.then((response) => {
-						console.log(response);
 						this.listaAnos = response.data;
 						this.contrachequeForm.ano = ano;
 					}).catch(error => {
-						console.log(error);
+						console.error(error);
 					});
 			}
 		},
@@ -769,7 +772,7 @@
 						this.listaFerias = response.data;
 						this.feriasLoading = false;
 					}).catch(error => {
-						console.log(error);
+						console.error(error);
 					});
 			},
 			verificarFerias: function() {
@@ -855,10 +858,10 @@
 						<label class="" for="pedir_ajuste">Pedir Ajuste?</label>
 					</div>
 					<div class="col-2">
-						<input class="form-control" type="text" name="obsersavacao_dia" placeholder="Observação dia" v-model="pontoForm.observacaoDia" />
+						<input class="form-control" type="text" name="obsersavacao_dia" placeholder="Observação dia" v-model="pontoForm.observacao_dia" />
 					</div>
 					<div class="col-2">
-						<input class="form-control" type="text" name="observacao_horario" placeholder="Observação horário" v-model="pontoForm.observacaoHorario" />
+						<input class="form-control" type="text" name="observacao_horario" placeholder="Observação horário" v-model="pontoForm.observacao_horario" />
 					</div>
 				</div>
 				<div class="row mt-4 mb-4">

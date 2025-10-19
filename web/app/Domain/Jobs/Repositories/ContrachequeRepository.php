@@ -20,7 +20,6 @@ class ContrachequeRepository implements RepositoryInterface
 
 	public function search(array $criteria): Collection
 	{
-		logger($criteria);
 		return $this->model
 			->where('user_id', $criteria['usuario_id'])
 			->when($criteria['ano'] ?? false, function ($query, $ano) {
