@@ -30,7 +30,7 @@ class PontoResource
 				'debito' => $item->debito ? $item->debito : '-',
 				'pedir_ajuste' => $item->pedir_ajuste,
 				'ajuste_finalizado' => $item->ajuste_finalizado,
-				'link_ajuste' => route('jobs.pontos.edit', ['ponto' => $item->id]),
+				'link_ajuste' => route('jobs.pontos.edit', ['id' => $item->id]),
 			];
 		})->toArray();
 	}

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Jobs\Interfaces\ControllerInterface;
+use App\Domain\Jobs\Contracts\ControllerInterface;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;

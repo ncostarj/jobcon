@@ -34,7 +34,7 @@
 </div>
 <div class="row" id="horarioApp">
 	<div class="col-12">
-		<form action="{{ route('jobs.pontos.update', [ 'ponto' => $ponto->id ]) }}" method="post">
+		<form action="{{ route('jobs.pontos.update', [ 'id' => $ponto->id ]) }}" method="post">
 			@method('PUT')
 			@csrf
 			<div class="row">

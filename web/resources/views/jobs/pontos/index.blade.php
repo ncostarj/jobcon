@@ -33,7 +33,7 @@
 				<td>{{ $ponto->saida->hora??'-' }}</td>
 				<td>{{ $ponto->observacao ?? '-' }}</td>
 				<td>
-					<a href="{{ route('jobs.pontos.edit', [ 'ponto' => $ponto->id ]) }}">Editar</a>
+					<a href="{{ route('jobs.pontos.edit', [ 'id' => $ponto->id ]) }}">Editar</a>
 					<a href="">Apagar</a>
 				</td>
 			</tr>

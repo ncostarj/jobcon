@@ -2,7 +2,7 @@
 
 namespace App\Domain\Jobs\Services;
 
-use App\Domain\Jobs\Interfaces\ServiceInterface;
+use App\Domain\Jobs\Contracts\ServiceInterface;
 use App\Domain\Jobs\Models\Contracheque;
 use App\Domain\Jobs\Repositories\ContrachequeRepository;
 use Illuminate\Support\Collection;

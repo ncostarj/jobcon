@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Jobs\Interfaces;
+namespace App\Domain\Jobs\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;

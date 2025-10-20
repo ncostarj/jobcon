@@ -2,7 +2,7 @@
 
 namespace App\Domain\Jobs\Repositories;
 
-use App\Domain\Jobs\Interfaces\RepositoryInterface;
+use App\Domain\Jobs\Contracts\RepositoryInterface;
 use App\Domain\Jobs\Models\Contracheque;
 use App\Domain\Jobs\Models\Empresa;
 use App\Models\User;

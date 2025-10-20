@@ -4,7 +4,7 @@ namespace App\Domain\Jobs\Services;
 
 use App\Domain\Jobs\DTOs\HorarioDTO;
 use App\Domain\Jobs\DTOs\PontoDTO;
-use App\Domain\Jobs\Interfaces\ServiceInterface;
+use App\Domain\Jobs\Contracts\ServiceInterface;
 use App\Domain\Jobs\Models\Ponto;
 use App\Domain\Jobs\Repositories\HorarioRepository;
 use App\Domain\Jobs\Repositories\PontoRepository;

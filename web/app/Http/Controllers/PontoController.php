@@ -2,18 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Jobs\Contracts\ControllerInterface;
 use Illuminate\Http\Request;
 use App\Http\Requests\PontoRequest;
 use App\Domain\Jobs\Models\Ponto;
 use App\Domain\Jobs\Models\Horario;
+use App\Domain\Jobs\Services\PontoService;
+
 // use App\Models\Saudacao;
 // use App\Repositories\PontoRepository;
 // use App\Models\Slack\SlackNotification;
 // use App\Repositories\HorarioRepository;
 
-class PontoController extends Controller
+class PontoController extends Controller implements ControllerInterface
 {
 	//
+
+	protected $pontoService;
+
+	public function __construct(PontoService $pontoService)
+	{
+		$this->pontoService = $pontoService;
+	}
 
 	public function index(Request $request)
 	{
@@ -27,10 +37,9 @@ class PontoController extends Controller
 			'saida' => 'bi bi-arrow-left-circle-fill'
 		];
 
-		$pontos = Ponto::with('horarios')->orderBy('dia','desc')->get();
+		$pontos = Ponto::with('horarios')->orderBy('dia', 'desc')->get();
 
 		return view('jobs.pontos.index', compact('pontos', 'icons'));
-
 	}
 
 	public function create()
@@ -38,28 +47,28 @@ class PontoController extends Controller
 		return view('jobs.pontos.form');
 	}
 
-	// public function store(Request $request, PontoRepository $horarioRepository)
-	// {
-	// 	// $horarioRepository->insert($request->only(['dia', 'hora', 'tipo', 'pedir_ajuste', 'observacao']));
-	// 	return redirect()->route('jobs.pontos.form');
-	// }
-
-	// public function edit(Ponto $ponto)
-	// {
-	// 	return view('jobs.pontos.form', compact('ponto'));
-	// }
-
-	public function update(Ponto $ponto, PontoRequest $request)
+	public function store(Request $request)
 	{
+		// 	// $horarioRepository->insert($request->only(['dia', 'hora', 'tipo', 'pedir_ajuste', 'observacao']));
+		// 	return redirect()->route('jobs.pontos.form');
+	}
 
-		$validated = $request->validate();
-		dd($validated);
+	public function edit(string $id)
+	{
+		$ponto = $this->pontoService->find($id);
+		return view('jobs.pontos.form', compact('id', 'ponto'));
+	}
+
+	public function update(string $id, Request $request)
+	{
+		$this->pontoService->update($id, $request->all());
+		return redirect()->route('jobs.dashboard.index');
 
 		// $pontoData = $request->only('dia','categoria','pedir_ajuste','ajuste_finalizado','observacao');
 		// $ponto->update($pontoData);
 
 		// if($request->has('entrada') && !empty($request->input('entrada'))) {
-        //     $horario = Horario::query()
+		//     $horario = Horario::query()
 		// 		->where([
 		// 			[ 'ponto_id', '=', $ponto->id ],
 		// 			[ 'tipo', '=', 'entrada' ]
@@ -132,13 +141,13 @@ class PontoController extends Controller
 		// 	}
 		// }
 
-		// return redirect()->route('jobs.dashboard.index');
+
 	}
 
-	// public function destroy(Horario $horario)
-	// {
-	// 	return redirect()->route('jobs.horarios.index');
-	// }
+	public function destroy(string $id)
+	{
+		// 	return redirect()->route('jobs.horarios.index');
+	}
 
 	// public function assign(Request $request, PontoRepository $horarioRepository, SlackNotification $slackNotification)
 	// {

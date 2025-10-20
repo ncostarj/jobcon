@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Domain\Jobs\Interfaces\ControllerInterface;
+use App\Domain\Jobs\Contracts\ControllerInterface;
 use App\Http\Controllers\Controller;
 use Throwable;
 

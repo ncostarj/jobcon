@@ -2,7 +2,7 @@
 
 namespace App\Domain\Jobs\Repositories;
 
-use App\Domain\Jobs\Interfaces\RepositoryInterface;
+use App\Domain\Jobs\Contracts\RepositoryInterface;
 use App\Domain\Jobs\Models\Horario;
 use App\Domain\Jobs\Models\Ponto;
 use App\Models\User;
