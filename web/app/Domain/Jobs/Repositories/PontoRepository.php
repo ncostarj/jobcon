@@ -4,24 +4,22 @@ namespace App\Domain\Jobs\Repositories;
 
 use App\Domain\Jobs\Contracts\RepositoryInterface;
 use App\Domain\Jobs\Models\Ponto;
-use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class PontoRepository implements RepositoryInterface
 {
 	protected $model;
-	protected $horarioRepository;
 
-	public function __construct(Ponto $ponto, HorarioRepository $horarioRepository)
+	public function __construct(Ponto $ponto)
 	{
 		$this->model = $ponto;
-		$this->horarioRepository = $horarioRepository;
 	}
 
 	public function search(array $criteria): Collection
 	{
 		return $this->model
+			->with(['usuario', 'horarios'])
 			->where('user_id', $criteria['usuario_id'])
 			->when($criteria['dia'] ?? false, fn($query, $dia) => $query->where('dia', $dia))
 			->when($criteria['mes'] ?? false, fn($query, $mes) => $query->whereRaw('MONTH(dia) = ?', [$mes]))
@@ -37,21 +35,14 @@ class PontoRepository implements RepositoryInterface
 
 	public function create(array $data): Ponto
 	{
-		$model = $this->createPonto($data);
-		$this->createHorario($model, $data['horario']);
-		return $model;
+		return $this->model->create($data);
 	}
 
-	private function createPonto(array $data) : Ponto{
-		$model = $this->model->fill($data);
-		$model->usuario()->associate(User::where('id', $data['user_id'])->first());
-		$model->save();
-		return $model;
-	}
-
-	private function createHorario(Ponto $model, array $horarioData) {
-		$horario = $this->horarioRepository->create($horarioData);
-		$model->horarios()->save($horario);
+	public function createWithUser(array $data): Ponto
+	{
+		$this->model->usuario()->associate($data['usuario']);
+		$this->model->fill($data)->save();
+		return $this->model;
 	}
 
 	public function update(string $id, array $data): bool
@@ -65,8 +56,6 @@ class PontoRepository implements RepositoryInterface
 		$ponto = $this->find($id);
 		return $ponto->delete();
 	}
-
-	public function assign() {}
 
 	public function summarize(array $criteria)
 	{

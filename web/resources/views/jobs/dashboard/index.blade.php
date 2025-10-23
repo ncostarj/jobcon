@@ -224,15 +224,18 @@
 		el: '#ponto-app',
 		data: {
 			gateway: new Gateway(),
-			pontoForm: {
-				categoria: 'home_office',
+			pontoAssignForm: {
 				usuarioId: '{{ $dados->usuario->id }}',
-				observacao_dia: '',
-				observacao_horario: '',
+				categoria: 'home_office',
 				pedir_ajuste: false,
+				observacao_dia: '',
+				observacao_horario: ''
+			},
+			pontoSearchForm: {
+				usuarioId: '{{ $dados->usuario->id }}',
 				mes: '',
 				meses: [],
-				ordenacao: '',
+				ordenacao: ''
 			},
 			listaPontos: [],
 			bancoHoras: {},
@@ -264,7 +267,6 @@
 				this.gateway
 					.get(`{{ route('api.v1.jobs.calendario.index') }}`)
 					.then((response) => {
-						console.log(response);
 						this.calendario = response.data;
 						this.calendarioLoading = false;
 					})
@@ -274,9 +276,9 @@
 			},
 			buscarMeses: function() {
 				this.gateway
-					.get(`{{ route('api.v1.jobs.pontos.listar_meses') }}?usuario_id=${this.pontoForm.usuarioId}`)
+					.get(`{{ route('api.v1.jobs.pontos.listar_meses') }}?usuario_id=${this.pontoAssignForm.usuarioId}`)
 					.then((response) => {
-						this.pontoForm.meses = response.data;
+						this.pontoSearchForm.meses = response.data;
 					})
 					.catch(error => {
 						console.error(error);
@@ -284,25 +286,27 @@
 			},
 			marcar: function(rota, tipo) {
 
-				if (!this.pontoForm.categoria) {
+				if (!this.pontoAssignForm.categoria) {
 					alert('O campo categoria precisa estar preenchido!');
 					return false;
 				}
 
 				let objDate = new Date();
-				let form = {
-					"usuario_id": this.pontoForm.usuarioId,
-					"dia": objDate.toISOString().replace(/([0-9]{4})-([0-9]{2})-([0-9]{2})(.*)/, '$1-$2-$3'),
-					"hora": objDate.toTimeString().replace(/([0-9]{2}):([0-9]{2})(.*)/, '$1:$2'),
-					"categoria": this.pontoForm.categoria,
-					"observacao_dia": this.pontoForm.observacao_dia,
-					"observacao_horario": this.pontoForm.observacao_horario,
-					"tipo": tipo,
-					"pedir_ajuste": this.pontoForm.pedir_ajuste ? 1 : 0,
-				};
+				let dia = objDate.toISOString().replace(/([0-9]{4})-([0-9]{2})-([0-9]{2})(.*)/, '$1-$2-$3');
+				let hora = objDate.toTimeString().replace(/([0-9]{2}):([0-9]{2})(.*)/, '$1:$2');
 
-				// console.log(this.pontoForm);
-				console.log(form);
+				let form = {
+					"usuario_id": this.pontoAssignForm.usuarioId,
+					"dia": dia,
+					"categoria": this.pontoAssignForm.categoria,
+					"pedir_ajuste": this.pontoAssignForm.pedir_ajuste ? 1 : 0,
+					"observacao": this.pontoAssignForm.observacao_dia,
+					"horarios": [{
+						"tipo": tipo,
+						"hora": hora,
+						"observacao": this.pontoAssignForm.observacao_horario,
+					}]
+				};
 
 				this.gateway
 					.post(rota, JSON.stringify(form))
@@ -310,9 +314,9 @@
 						this.pontoForm = {
 							categoria: 'home_office',
 							usuarioId: '{{ $dados->usuario->id }}',
-							observacao: '',
 							pedir_ajuste: false,
-							mes: objDate.getFullYear() + '-' + (objDate.getMonth() + 1),
+							observacao_dia: '',
+							observacao_horario: '',
 						};
 						this.listar();
 					})
@@ -321,17 +325,17 @@
 					});
 			},
 			listar: function() {
-				// this.pontoLoading = true;
+				this.pontoLoading = true;
 				let hoje = new Date();
 				let month = hoje.getMonth() + 1;
 				let year = hoje.getFullYear();
 
-				if (this.pontoForm.mes) {
-					[year, month] = this.pontoForm.mes.split('-');
+				if (this.pontoSearchForm.mes) {
+					[year, month] = this.pontoSearchForm.mes.split('-');
 				}
 
 				this.gateway
-					.get(`{{ route('api.v1.jobs.pontos.listar') }}?mes=${month}&ano=${year}&usuario_id=${this.pontoForm.usuarioId}&ordenacao=${this.pontoForm.ordenacao??''}`)
+					.get(`{{ route('api.v1.jobs.pontos.listar') }}?mes=${month}&ano=${year}&usuario_id=${this.pontoAssignForm.usuarioId}&ordenacao=${this.pontoSearchForm.ordenacao??''}`)
 					.then((response) => {
 						this.pontoLoading = false;
 						this.listaPontos = response.data;
@@ -348,12 +352,12 @@
 				let month = hoje.getMonth() + 1;
 				let year = hoje.getFullYear();
 
-				if (this.pontoForm.mes) {
-					[year, month] = this.pontoForm.mes.split('-');
+				if (this.pontoSearchForm.mes) {
+					[year, month] = this.pontoSearchForm.mes.split('-');
 				}
 
 				this.gateway
-					.get(`{{ route('api.v1.jobs.pontos.calcular_subtotal') }}?mes=${month}&ano=${year}&usuario_id=${this.pontoForm.usuarioId}`)
+					.get(`{{ route('api.v1.jobs.pontos.calcular_subtotal') }}?mes=${month}&ano=${year}&usuario_id=${this.pontoAssignForm.usuarioId}`)
 					.then((response) => {
 						this.subtotalPontos = response.data;
 					})
@@ -363,7 +367,7 @@
 			},
 			obterBancoHoras: function() {
 				this.gateway
-					.get(`{{ route('api.v1.jobs.frequencias.listarUltimoSaldo') }}?usuario_id=${this.pontoForm.usuarioId}`)
+					.get(`{{ route('api.v1.jobs.frequencias.listarUltimoSaldo') }}?usuario_id=${this.pontoAssignForm.usuarioId}`)
 					.then((response) => {
 						this.bancoHoras = response.data;
 					})
@@ -376,12 +380,12 @@
 				let month = hoje.getMonth() + 1;
 				let year = hoje.getFullYear();
 
-				if (this.pontoForm.mes) {
-					[year, month] = this.pontoForm.mes.split('-');
+				if (this.pontoSearchForm.mes) {
+					[year, month] = this.pontoSearchForm.mes.split('-');
 				}
 
 				this.gateway
-					.get(`{{ route('api.v1.jobs.pontos.resumo') }}?mes=${month}&ano=${year}&usuario_id=${this.pontoForm.usuarioId}`)
+					.get(`{{ route('api.v1.jobs.pontos.resumo') }}?mes=${month}&ano=${year}&usuario_id=${this.pontoAssignForm.usuarioId}`)
 					.then((response) => {
 						this.resumos = response.data;
 					})
@@ -395,8 +399,8 @@
 			let hoje = new Date()
 			let mesAtual = hoje.getMonth() + 1;
 			let anoAtual = hoje.getFullYear();
-			this.pontoForm.mes = `${anoAtual}-${mesAtual}`;
-			this.pontoForm.ordenacao = 'desc';
+			this.pontoSearchForm.mes = `${anoAtual}-${mesAtual}`;
+			this.pontoSearchForm.ordenacao = 'desc';
 			// this.obterBancoHoras();
 			this.buscarMeses();
 			this.listar();
@@ -843,32 +847,32 @@
 						<a href="#" title="Marcar Saída" v-on:click.prevent="marcar('{{ route('api.v1.jobs.pontos.marcar') }}', 'saida')"><i class="bi bi-arrow-right-circle-fill fs-2"></i></i></a>
 					</div>
 					<div class="col-2">
-						<input type="radio" class="btn-check" name="categoria" id="presencial" value="presencial" v-model="pontoForm.categoria" autocomplete="off">
+						<input type="radio" class="btn-check" name="categoria" id="presencial" value="presencial" v-model="pontoAssignForm.categoria" autocomplete="off">
 						<label class="btn btn-primary" for="presencial"><i class="bi bi-building"></i></label>
 
-						<input type="radio" class="btn-check" name="categoria" id="ho" value="home_office" v-model="pontoForm.categoria" autocomplete="off">
+						<input type="radio" class="btn-check" name="categoria" id="ho" value="home_office" v-model="pontoAssignForm.categoria" autocomplete="off">
 						<label class="btn btn-primary" for="ho"><i class="bi bi-house"></i></label>
 					</div>
 					<div class="col-2">
-						<input type="checkbox" class="" name="pedir_ajuste" id="pedir_ajuste" value="pedir_ajuste" v-model="pontoForm.pedir_ajuste" autocomplete="off">
+						<input type="checkbox" class="" name="pedir_ajuste" id="pedir_ajuste" value="pedir_ajuste" v-model="pontoAssignForm.pedir_ajuste" autocomplete="off">
 						<label class="" for="pedir_ajuste">Pedir Ajuste?</label>
 					</div>
 					<div class="col-2">
-						<input class="form-control" type="text" name="obsersavacao_dia" placeholder="Observação dia" v-model="pontoForm.observacao_dia" />
+						<input class="form-control" type="text" name="obsersavacao_dia" placeholder="Observação dia" v-model="pontoAssignForm.observacao_dia" />
 					</div>
 					<div class="col-2">
-						<input class="form-control" type="text" name="observacao_horario" placeholder="Observação horário" v-model="pontoForm.observacao_horario" />
+						<input class="form-control" type="text" name="observacao_horario" placeholder="Observação horário" v-model="pontoAssignForm.observacao_horario" />
 					</div>
 				</div>
 				<div class="row mt-4 mb-4">
 					<div class="col-2">
-						<select class="form-select" v-model="pontoForm.mes">
+						<select class="form-select" v-model="pontoSearchForm.mes">
 							<option value="">Mês</option>
-							<option v-for="mes in pontoForm.meses" :value="mes.mes_ano">@{{ mes.nome }}/@{{ mes.ano }}</option>
+							<option v-for="mes in pontoSearchForm.meses" :value="mes.mes_ano">@{{ mes.nome }}/@{{ mes.ano }}</option>
 						</select>
 					</div>
 					<div class="col-2">
-						<select class="form-select" v-model="pontoForm.ordenacao">
+						<select class="form-select" v-model="pontoSearchForm.ordenacao">
 							<option value="">Ordem</option>
 							<option value="desc">Decrescente</option>
 							<option value="asc">Crescente</option>

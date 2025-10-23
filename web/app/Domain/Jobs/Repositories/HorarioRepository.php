@@ -21,7 +21,8 @@ class HorarioRepository implements RepositoryInterface
 	{
 		return $this->model
 			->when($criteria['ponto_id']??false, fn($query, $ponto_id) => $query->where('ponto_id', $ponto_id))
-			->when($criteria['hora']??false, fn($query, $hora) => $query->where('ponto_id', $hora))
+			->when($criteria['tipo']??false, fn($query, $tipo) => $query->where('tipo', $tipo))
+			->when($criteria['hora']??false, fn($query, $hora) => $query->where('hora', $hora))
 			->orderBy('hora', 'asc')
 			->get();
 	}
@@ -33,10 +34,13 @@ class HorarioRepository implements RepositoryInterface
 
 	public function create(array $data): Horario
 	{
-		$model = $this->model->fill($data);
-		$model->ponto()->associate(Ponto::where('dia', $data['dia'])->first());
-		$model->save();
-		return $model;
+		return $this->model->create($data);
+	}
+
+	public function createWithPonto(Ponto $ponto, array $data) : Horario {
+		$this->model->ponto()->associate($ponto);
+		$this->model->fill($data)->save();
+		return $this->model;
 	}
 
 	public function update(string $id, array $data): bool
@@ -50,8 +54,6 @@ class HorarioRepository implements RepositoryInterface
 		$ponto = $this->find($id);
 		return $ponto->delete();
 	}
-
-	public function assign() {}
 
 	public function summarize(array $criteria)
 	{

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\PontoRequest;
 use App\Domain\Jobs\Models\Ponto;
 use App\Domain\Jobs\Resources\PontoMesResource;
 use App\Domain\Jobs\Resources\PontoResource;
@@ -29,10 +28,10 @@ class PontoController extends BaseApiController
 		return $response;
 	}
 
-	public function assign(PontoService $pontoService, PontoRequest $request)
+	public function assign(PontoService $pontoService, Request $request)
 	{
 		try {
-			$response = $this->response(200, trans('api.200'), ['ponto' => $pontoService->assign($request->validated())]);
+			$response = $this->response(200, trans('api.200'), [ 'ponto' => $pontoService->assign($request) ]);
 		} catch (\Throwable $th) {
 			$this->log($th);
 			$response = $this->response(500, trans('api.500'));

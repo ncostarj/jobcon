@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Domain\Jobs\Models\Ponto;
 use App\Domain\Jobs\Models\Role;
 use App\Domain\Shared\Traits\Uuid;
 use Laravel\Sanctum\HasApiTokens;
@@ -48,4 +49,8 @@ class User extends Authenticatable
     public function roles() {
         return $this->belongsToMany(Role::class)->orderBy('nome', 'asc');
     }
+
+	public function pontos() {
+		return $this->hasMany(Ponto::class, 'user_id');
+	}
 }
