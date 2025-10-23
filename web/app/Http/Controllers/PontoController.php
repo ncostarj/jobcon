@@ -56,7 +56,7 @@ class PontoController extends Controller implements ControllerInterface
 	public function edit(string $id)
 	{
 		$ponto = $this->pontoService->find($id);
-		return view('jobs.pontos.form', compact('id', 'ponto'));
+		return view('jobs.pontos.form', compact('ponto'));
 	}
 
 	public function update(string $id, Request $request)
