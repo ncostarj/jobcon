@@ -16,6 +16,7 @@ use Illuminate\Support\Collection;
 
 class EmpresaService implements ServiceInterface
 {
+	// TODO readequar o empresa service
 	protected $empresaRepository;
 	// protected $bancoRepository;
 
