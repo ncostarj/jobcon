@@ -3,12 +3,13 @@
 namespace App\Domain\Jobs\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 interface ServiceInterface {
-    public function search(array $criteria): Collection;
+    public function search(Request $request): Collection;
     public function find(string $id): ?Model;
-    public function create(array $data): Model;
-    public function update(string $id, array $data): bool;
+    public function create(Request $request): Model;
+    public function update(string $id, Request $request): bool;
     public function delete(string $id): bool;
 }
