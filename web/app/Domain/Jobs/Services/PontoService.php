@@ -26,9 +26,9 @@ class PontoService implements ServiceInterface
 		$this->usuarioRepository = $usuarioRepository;
 	}
 
-	public function search(array $criteria = []): Collection
+	public function search(Request $request): Collection
 	{
-		return $this->pontoRepository->search($criteria);
+		return $this->pontoRepository->search($request->all());
 	}
 
 	public function find(string $id): ?Ponto
@@ -36,14 +36,31 @@ class PontoService implements ServiceInterface
 		return $this->pontoRepository->find($id);
 	}
 
-	public function create(array $data): Ponto
+	public function create(Request $request): Ponto
 	{
-		return $this->pontoRepository->create($data);
+		return $this->pontoRepository->create($request->all());
 	}
 
-	public function update(string $id, array $data): bool
+	public function update(string $id, Request $request): bool
 	{
-		return $this->pontoRepository->update($id, $data);
+		$ponto = $this->pontoRepository->find($id);
+		$pontoDTO = PontoDTO::fromRequest($request->merge(['usuario' => auth()->user()]));
+		$horarios = collect($request->input('horarios'));
+		$horarios->filter(fn($horario) => !empty($horario['hora']))
+			->each(function ($horario) use ($ponto) {
+				$horarioDTO = HorarioDTO::fromArray(array_merge($horario, ['ponto' => $ponto]));
+				$searchData = ['ponto_id' => $ponto->id, 'tipo' => $horario['tipo']];
+				$horarioModel = $this->horarioRepository->search($searchData)->first();
+
+				if (!$horarioModel) {
+					$this->horarioRepository->update($horarioModel->id, $horarioDTO->toArray());
+				}
+
+				if ($horarioModel) {
+					$this->horarioRepository->createWithPonto($horarioDTO->toArray());
+				}
+			});
+		return $this->pontoRepository->update($id, $pontoDTO->toArray());
 	}
 
 	public function delete(string $id): bool
@@ -53,17 +70,16 @@ class PontoService implements ServiceInterface
 
 	public function assign(Request $request): Ponto
 	{
-		$usuario = $this->usuarioRepository->search(['id' => $request->input('usuario_id')])->first();
-		$request->merge(compact('usuario'));
-		$pontoDTO = PontoDTO::fromRequest($request);
-		$horarios = collect($request->input('horarios'));
-
 		$ponto = $this->pontoRepository
 			->search([
 				'usuario_id' => $request->input('usuario_id'),
 				'dia' => $request->input('dia')
 			])
 			->first();
+
+		$usuario = $this->usuarioRepository->search(['id' => $request->input('usuario_id')])->first();
+		$pontoDTO = PontoDTO::fromRequest($request->merge(compact('usuario')));
+
 
 		if (!$ponto) {
 			$ponto = $this->pontoRepository->createWithUser($pontoDTO->toArray());
@@ -73,11 +89,12 @@ class PontoService implements ServiceInterface
 			$this->pontoRepository->update($ponto->id, $pontoDTO->toArray());
 		}
 
+		$horarios = collect($request->input('horarios'));
 		$horarios->each(function ($horario) use ($ponto) {
-			$modelHorario = $this->horarioRepository->search(['ponto_id' => $ponto->id, 'tipo' => $horario['tipo']])->first();
-			if (!$modelHorario) {
-				$dto = HorarioDTO::fromArray($horario);
-				$this->horarioRepository->createWithPonto($ponto, $dto->toArray());
+			$horarioDTO = HorarioDTO::fromArray(array_merge($horario, [ 'ponto' => $ponto ]));
+			$horarioModel = $this->horarioRepository->search(['ponto_id' => $ponto->id, 'tipo' => $horario['tipo']])->first();
+			if (!$horarioModel) {
+				$this->horarioRepository->createWithPonto($horarioDTO->toArray());
 			}
 		});
 
@@ -93,178 +110,6 @@ class PontoService implements ServiceInterface
 	{
 		return $this->pontoRepository->getMonths($criteria);
 	}
-
-	// public function get(array $data = [])
-	// {
-	// 	extract($data);
-
-	// 	$ordenacao = empty($ordenacao) ? 'desc' : $ordenacao;
-
-	// 	return $this->model::with('horarios')
-	// 		->where([
-	// 			['user_id', '=', $usuario_id]
-	// 		])
-	// 		->when($mes, function ($query, $paramMes) {
-	// 			return $query->whereRaw('MONTH(dia) = ?', [$paramMes]);
-	// 		})
-	// 		->when($ano, function ($query, $paramAno) {
-	// 			return $query->whereRaw('YEAR(dia) = ?', [$paramAno]);
-	// 		})
-	// 		->when($ordenacao, function ($query, $paramOrdenacao) {
-	// 			return $query->orderBy('dia', $paramOrdenacao);
-	// 		})
-	// 		->get();
-	// }
-
-	// public function insert(array $data)
-	// {
-	// 	$ponto = $this->model::query()->where('dia', $data['dia'])->first();
-
-	// 	if (empty($ponto)) {
-	// 		$ponto = new Ponto;
-	// 		$pontoData = [
-	// 			'dia' => $data['dia'],
-	// 			'categoria' => $data['categoria'],
-	// 		];
-
-	// 		if (!empty($data['pedir_ajuste'])) {
-	// 			$pontoData = array_merge($data, [
-	// 				'pedir_ajuste' => $data['pedir_ajuste'],
-	// 			]);
-	// 		}
-
-	// 		if (!empty($data['observacao'])) {
-	// 			$pontoData = array_merge($data, [
-	// 				'observacao' => $data['observacao']
-	// 			]);
-	// 		}
-
-	// 		$ponto->fill($pontoData);
-
-	// 		$ponto->usuario()->associate(User::where('id', $data['usuario_id'])->first());
-
-	// 		$ponto->save();
-
-	// 		$horario = Horario::query()
-	// 			->where('ponto_id', $ponto->id)
-	// 			->where('hora', $data['hora'])
-	// 			->first();
-
-	// 		if (empty($horario)) {
-	// 			$horario = (new Horario)
-	// 				->fill([
-	// 					"hora" => $data['hora'],
-	// 					"tipo" => $data['tipo'],
-	// 					// "observacao" => $data['observacao']
-	// 				]);
-
-	// 			$ponto->horarios()->save($horario);
-	// 		}
-	// 	}
-
-	// 	if (!empty($ponto)) {
-
-	// 		$pontoData = [];
-
-	// 		if (!empty($data['pedir_ajuste'])) {
-	// 			$pontoData = array_merge($data, [
-	// 				'pedir_ajuste' => $data['pedir_ajuste'],
-	// 			]);
-	// 		}
-
-	// 		if (!empty($data['observacao_dia'])) {
-	// 			$pontoData = array_merge($data, [
-	// 				'observacao' => $data['observacao_dia']
-	// 			]);
-	// 		}
-
-	// 		if (!empty($pontoData)) {
-	// 			$ponto
-	// 				->fill($pontoData)
-	// 				->save();
-	// 		}
-
-	// 		$horario = Horario::query()
-	// 			->where('ponto_id', $ponto->id)
-	// 			->where('tipo', $data['tipo'])
-	// 			->first();
-
-	// 		if (empty($horario)) {
-
-	// 			$horarioData = [
-	// 				"hora" => $data['hora'],
-	// 				"tipo" => $data['tipo'],
-	// 			];
-
-	// 			if (!empty($data['observacao_horario'])) {
-	// 				$horarioData = array_merge($horarioData, [
-	// 					"observacao" => $data['observacao_horario']
-	// 				]);
-	// 			}
-
-	// 			$horario = (new Horario)
-	// 				->fill($horarioData);
-
-	// 			$ponto->horarios()->save($horario);
-	// 		}
-	// 	}
-
-	// 	return $ponto;
-	// }
-
-	// public function update() {}
-
-	// public function delete() {}
-
-	// public function searchMonths(array $dados)
-	// {
-	// 	return Ponto::query()
-	// 		->selectRaw('date_format(dia, "%m") as mes, date_format(dia, "%Y") as ano')
-	// 		->when($dados['usuario_id'], function($query) use ($dados){
-	// 			return $query->where('user_id', $dados['usuario_id']);
-	// 		})
-	// 		->groupBy(DB::raw('date_format(dia, "%m"), date_format(dia, "%Y")'))
-	// 		->orderBy('ano', 'desc')
-	// 		->orderBy('mes', 'desc')
-	// 		->get();
-	// }
-
-	// public function summarize($dados)
-	// {
-	// 	extract($dados);
-
-	// 	$pontos = Ponto::query()
-	// 		->where('user_id', $usuario_id)
-	// 		->when($mes, function ($query, $paramMes) {
-	// 			return $query->whereRaw('MONTH(dia) = ?', [$paramMes]);
-	// 		})
-	// 		->when($ano, function ($query, $paramAno) {
-	// 			return $query->whereRaw('YEAR(dia) = ?', [$paramAno]);
-	// 		})
-	// 		->get();
-
-	// 	$summarize = [];
-	// 	foreach ($pontos as $ponto) {
-	// 		$summarize[$ponto->categoria] ??= 0;
-	// 		$summarize[$ponto->categoria] += 1;
-
-	// 		$summarize['ajustes'] ??= 0;
-	// 		if ($ponto->pedir_ajuste) {
-	// 			$summarize['ajustes'] += 1;
-	// 		}
-
-	// 		$summarize['observacoes'] ??= 0;
-	// 		if (!empty($ponto->observacao)) {
-	// 			$summarize['observacoes'] += 1;
-	// 		}
-
-	// 		$summarize['total'] ??= 0;
-	// 		$summarize['total'] += 1;
-	// 	}
-
-	// 	return $summarize;
-	// }
-
 
 	// protected $repository;
 
