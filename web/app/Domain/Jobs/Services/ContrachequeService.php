@@ -5,6 +5,7 @@ namespace App\Domain\Jobs\Services;
 use App\Domain\Jobs\Contracts\ServiceInterface;
 use App\Domain\Jobs\Models\Contracheque;
 use App\Domain\Jobs\Repositories\ContrachequeRepository;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class ContrachequeService implements ServiceInterface
@@ -17,9 +18,9 @@ class ContrachequeService implements ServiceInterface
 		$this->repository = $repository;
 	}
 
-	public function search(array $criteria): Collection
+	public function search(Request $request): Collection
 	{
-		return $this->repository->search($criteria);
+		return $this->repository->search($request->all());
 	}
 
 	public function find(string $id): ?Contracheque
@@ -27,14 +28,14 @@ class ContrachequeService implements ServiceInterface
 		return $this->repository->find($id);
 	}
 
-	public function create(array $data): Contracheque
+	public function create(Request $request): Contracheque
 	{
-		return $this->repository->create($data);
+		return $this->repository->create($request->all());
 	}
 
-	public function update(string $id, array $data): bool
+	public function update(string $id, Request $request): bool
 	{
-		return $this->repository->update($id, $data);
+		return $this->repository->update($id, $request->all());
 	}
 
 	public function delete(string $id): bool
@@ -45,32 +46,4 @@ class ContrachequeService implements ServiceInterface
 	public function getYears(array $criteria) : Collection {
 		return $this->repository->getYears($criteria);
 	}
-
-	// public function get(array $dados = [])
-	// {
-	// 	return $this->defaultReponse(200, 'Dados retornados com sucesso.', (new ContrachequeResource($this->repository->get($dados)))->toArray());
-	// }
-
-	// public function searchYears(array $dados) {
-	// 	$query = Contracheque::query()
-	// 		->when($dados['usuario_id'], function($query) use ($dados){
-	// 			return $query->where('user_id', $dados['usuario_id']);
-	// 		})
-	// 		->selectRaw('date_format(competencia, "%Y") as ano');
-	// 	// if($dados['ano']) {
-	// 	// 	$query = $query
-	// 	// 		->whereRaw('date_format(competencia, "%Y") = ?', [ "'{$dados['ano']}'" ]);
-	// 	// }
-	// 	// // $anos =
-	// 	// // $anos
-	// 	// // $ano = $dados['ano']??null;
-	// 	// // ->when($ano, function($query,$ano) {
-	// 	// // 	return $query->whereRaw('date_format(competencia, "%Y")','=', [ $ano ]);
-	// 	// // })
-	// 	$anos = $query
-	// 	->groupBy(DB::raw('date_format(competencia, "%Y")'))
-	// 	->orderBy('ano', 'desc')
-	// 	->get();
-	// 	return $this->defaultReponse(200, 'Dados retornados com sucesso.', $anos);
-	// }
 }
