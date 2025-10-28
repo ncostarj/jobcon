@@ -7,14 +7,14 @@ use Illuminate\Http\Request;
 
 class PontoDTO
 {
-	protected User $usuario;
+	protected ?User $usuario;
 	protected string $dia;
 	protected string $categoria;
 	protected bool $pedir_ajuste;
 	protected ?bool $ajuste_finalizado;
 	protected ?string $observacao;
 
-	public function __construct(User $usuario, string $dia, string $categoria, bool $pedir_ajuste, ?bool $ajuste_finalizado, ?string $observacao)
+	public function __construct(?User $usuario, string $dia, string $categoria, bool $pedir_ajuste, ?bool $ajuste_finalizado, ?string $observacao)
 	{
 
 		$this->usuario = $usuario;
