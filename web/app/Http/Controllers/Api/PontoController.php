@@ -19,7 +19,7 @@ class PontoController extends BaseApiController
 	public function index(PontoService $pontoService, Request $request)
 	{
 		try {
-			$response = $this->response(200, trans('api.200'), PontoResource::toArray($pontoService->search($request->all())));
+			$response = $this->response(200, trans('api.200'), PontoResource::toArray($pontoService->search($request)));
 		} catch (\Throwable $th) {
 			$this->log($th);
 			$response = $this->response(500, trans('api.500'));

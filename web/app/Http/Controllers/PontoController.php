@@ -16,8 +16,6 @@ use App\Domain\Jobs\Services\PontoService;
 
 class PontoController extends Controller implements ControllerInterface
 {
-	//
-
 	protected $pontoService;
 
 	public function __construct(PontoService $pontoService)
@@ -27,7 +25,6 @@ class PontoController extends Controller implements ControllerInterface
 
 	public function index(Request $request)
 	{
-
 		$icons = [
 			'home_office' => 'bi bi-house',
 			'presencial' => 'bi bi-building',
@@ -37,7 +34,9 @@ class PontoController extends Controller implements ControllerInterface
 			'saida' => 'bi bi-arrow-left-circle-fill'
 		];
 
-		$pontos = Ponto::with('horarios')->orderBy('dia', 'desc')->get();
+		$usuario_id = auth()->user()->id;
+		$request->merge(compact('usuario_id'));
+		$pontos = $this->pontoService->search($request);
 
 		return view('jobs.pontos.index', compact('pontos', 'icons'));
 	}
@@ -61,7 +60,7 @@ class PontoController extends Controller implements ControllerInterface
 
 	public function update(string $id, Request $request)
 	{
-		$this->pontoService->update($id, $request->all());
+		$this->pontoService->update($id, $request);
 		return redirect()->route('jobs.dashboard.index');
 
 		// $pontoData = $request->only('dia','categoria','pedir_ajuste','ajuste_finalizado','observacao');

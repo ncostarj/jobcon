@@ -13,7 +13,7 @@ class ContrachequeController extends BaseApiController
 	public function index(ContrachequeService $contrachequeService, Request $request)
 	{
 		try {
-			$response = $this->response(200, trans('api.200'), ContrachequeResource::toArray($contrachequeService->search($request->all())));
+			$response = $this->response(200, trans('api.200'), ContrachequeResource::toArray($contrachequeService->search($request)));
 		} catch (\Throwable $th) {
 			$this->log($th);
 			$response = $this->response(500, trans('api.500'));
