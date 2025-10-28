@@ -20,9 +20,9 @@ class HorarioRepository implements RepositoryInterface
 	public function search(array $criteria): Collection
 	{
 		return $this->model
-			->when($criteria['ponto_id']??false, fn($query, $ponto_id) => $query->where('ponto_id', $ponto_id))
-			->when($criteria['tipo']??false, fn($query, $tipo) => $query->where('tipo', $tipo))
-			->when($criteria['hora']??false, fn($query, $hora) => $query->where('hora', $hora))
+			->when($criteria['ponto_id'] ?? false, fn($query, $ponto_id) => $query->where('ponto_id', $ponto_id))
+			->when($criteria['tipo'] ?? false, fn($query, $tipo) => $query->where('tipo', $tipo))
+			->when($criteria['hora'] ?? false, fn($query, $hora) => $query->where('hora', $hora))
 			->orderBy('hora', 'asc')
 			->get();
 	}
@@ -37,22 +37,25 @@ class HorarioRepository implements RepositoryInterface
 		return $this->model->create($data);
 	}
 
-	public function createWithPonto(Ponto $ponto, array $data) : Horario {
-		$this->model->ponto()->associate($ponto);
-		$this->model->fill($data)->save();
-		return $this->model;
+
+	public function createWithPonto(array $data): Horario
+	{
+		$model = new Horario;
+		$model->ponto()->associate($data['ponto']);
+		$model->fill($data)->save();
+		return $model;
 	}
 
 	public function update(string $id, array $data): bool
 	{
-		$ponto = $this->find($id);
-		return $ponto->update($data);
+		$horario = $this->find($id);
+		return $horario->update($data);
 	}
 
 	public function delete(string $id): bool
 	{
-		$ponto = $this->find($id);
-		return $ponto->delete();
+		$horario = $this->find($id);
+		return $horario->delete();
 	}
 
 	public function summarize(array $criteria)
