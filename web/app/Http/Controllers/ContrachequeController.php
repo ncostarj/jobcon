@@ -18,20 +18,23 @@ class ContrachequeController extends Controller implements ControllerInterface
 
 	public function index(Request $request)
 	{
-		return view('jobs.contracheques.index', ['contracheques' => $this->contrachequeService->search($request->all() + ['usuario_id' => auth()->user()->id])]);
+		$usuario_id = auth()->user()->id;
+		$request->merge(compact('usuario_id'));
+		$contracheques = $this->contrachequeService->search($request);
+		return view('jobs.contracheques.index', compact('contracheques'));
 	}
 
-	// TODO buscar empresas pelo EmpresaService
 	public function create()
 	{
 		return view('jobs.contracheques.form', [
 			'usuario' => auth()->user(),
 			'empresas' => Empresa::where('user_id', auth()->user()->id)->get(),
+			// 'empresas' => Empresa::where('user_id', auth()->user()->id)->get(),
 			'action' => route('jobs.contracheques.store')
 		]);
 	}
 
-	public function edit(string $id, Request $request)
+	public function edit(string $id)
 	{
 		return view('jobs.contracheques.form', [
 			'usuario' => auth()->user(),
