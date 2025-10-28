@@ -2,11 +2,11 @@
 
 namespace App\Domain\Jobs\DTOs;
 
-use App\Domain\Jobs\Models\Ponto;
 use Illuminate\Http\Request;
 
 class ContrachequeDTO
 {
+    // TODO mudar user_id para objeto de usuario
     protected string $user_id;
     protected string $empresa_id;
     protected string $competencia;
@@ -61,7 +61,7 @@ class ContrachequeDTO
            'salario_base' => $this->salario_base,
            'salario_liquido' => $this->salario_liquido,
            'total_vencimentos' => $this->total_vencimentos,
-           'total_desconto' => $this->total_desconto
+           'total_desconto' => $this->total_descontos
         ];
     }
 }
