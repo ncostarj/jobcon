@@ -19,6 +19,10 @@ class Horario extends Model
 		'observacao'
 	];
 
+	protected $casts = [
+		'hora' => 'datetime:H:i:s'
+	];
+
 	public function ponto()
 	{
 		return $this->belongsTo(Ponto::class, 'ponto_id');

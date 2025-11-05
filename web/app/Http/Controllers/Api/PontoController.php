@@ -3,16 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use App\Domain\Jobs\Models\Ponto;
 use App\Domain\Jobs\Resources\PontoMesResource;
 use App\Domain\Jobs\Resources\PontoResource;
 use App\Domain\Jobs\Resources\PontoResumoResource;
 use App\Domain\Jobs\Services\PontoService;
-
-// use App\Models\Saudacao;
-// use App\Repositories\PontoRepository;
-// use App\Models\Slack\SlackNotification;
-// use App\Repositories\HorarioRepository;
 
 class PontoController extends BaseApiController
 {
@@ -31,7 +25,7 @@ class PontoController extends BaseApiController
 	public function assign(PontoService $pontoService, Request $request)
 	{
 		try {
-			$response = $this->response(200, trans('api.200'), [ 'ponto' => $pontoService->assign($request) ]);
+			$response = $this->response(200, trans('api.200'), ['ponto' => $pontoService->assign($request)]);
 		} catch (\Throwable $th) {
 			$this->log($th);
 			$response = $this->response(500, trans('api.500'));
@@ -43,7 +37,7 @@ class PontoController extends BaseApiController
 	public function summarize(PontoService $pontoService, Request $request)
 	{
 		try {
-			$response = $this->response(200, trans('api.200'), PontoResumoResource::toArray($pontoService->summarize($request->all())));
+			$response = $this->response(200, trans('api.200'), PontoResumoResource::toArray($pontoService->summarize($request->all())) );
 		} catch (\Throwable $th) {
 			$this->log($th);
 			$response = $this->response(500, trans('api.500'));
@@ -64,23 +58,19 @@ class PontoController extends BaseApiController
 		return $response;
 	}
 
-	// public function create()
-	// {
-	// 	return view('jobs.pontos.form');
-	// }
+	public function calculateSubtotalHoras(PontoService $pontoService, Request $request)
+	{
+		try {
+			$response = $this->response(200, trans('api.200'), $pontoService->calculateSubtotalHoras($request->all()));
+		} catch (\Throwable $th) {
+			$this->log($th);
+			$response = $this->response(500, trans('api.500'));
+		}
 
-	// public function store(Request $request, PontoRepository $horarioRepository)
-	// {
-	// 	// $horarioRepository->insert($request->only(['dia', 'hora', 'tipo', 'pedir_ajuste', 'observacao']));
-	// 	return redirect()->route('jobs.pontos.form');
-	// }
+		return $response;
+	}
 
-	// public function edit(Ponto $ponto)
-	// {
-	// 	return view('jobs.pontos.form', compact('ponto'));
-	// }
-
-	public function update(Ponto $ponto, PontoRequest $request)
+	public function update(string $id, Request $request)
 	{
 
 		$validated = $request->validate();

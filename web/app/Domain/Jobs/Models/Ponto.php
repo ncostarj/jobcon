@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+use function PHPSTORM_META\map;
+
 class Ponto extends Model
 {
 	use Uuid, HasFactory, SoftDeletes;
@@ -62,120 +64,89 @@ class Ponto extends Model
 		return $this->horarios->where('tipo', 'saida')->first();
 	}
 
-	public function getSubtotalHorasAttribute($value)
-	{
-		if(!$this->entrada) {
-			return '00:00';
-		}
-
-		if(!$this->saida) {
-			return '00:00';
-		}
-
-		$jornada = strtotime($this->saida->hora) - strtotime($this->entrada->hora);
-		$jornada += strtotime($this->tempoIntervalo);
-
-		return date('H:i', $jornada);
-	}
-
-	public function getDebitoAttribute($value)
-	{
-		$resultado = "00:00";
-
-		if ($this->subtotalHoras == '00:00') {
-			return $resultado;
-		}
-
-		$padrao = strtotime('09:00:00');
-		$subtotal = strtotime($this->subtotalHoras);
-
-		if ($subtotal < $padrao) {
-			$resultado = gmdate('H:i', $padrao - $subtotal);
-		}
-
-		return $resultado;
-	}
-
-	public function getCreditoAttribute($value)
-	{
-		$resultado = "00:00";
-
-		if ($this->subtotalHoras == '00:00') {
-			return $resultado;
-		}
-
-		$padrao = strtotime('09:00:00');
-		$subtotal = strtotime($this->subtotalHoras);
-
-		if ($subtotal > $padrao) {
-			$resultado = gmdate('H:i', $subtotal - $padrao);
-		}
-
-		return $resultado;
-	}
-
-	public function getHorarioAlmocoSaidaAttribute($value)
-	{
-		return $this->entrada ? date('H:i', strtotime($this->entrada->hora) + (3600 * 4)) : '00:00:00';
-	}
-
-	public function getTempoIntervaloAttribute($valor)
+	public function getIntervaloAttribute($value)
 	{
 		if (!$this->almoco_retorno) {
 			return '00:00';
 		}
 
-		$almoco_saida = strtotime($this->almoco_saida->hora);
-		$almoco_retorno = strtotime($this->almoco_retorno->hora);
-		$diferenca = $almoco_retorno - $almoco_saida;
-		return gmdate('H:i', $diferenca - 3600);
+		return gmdate('H:i', (strtotime($this->almoco_retorno->hora) - strtotime($this->almoco_saida->hora)));
 	}
 
-	public function getHorarioRetornoAttribute($valor)
+	public function getIntervaloTotalAttribute($value)
 	{
-		$horario = $this->almoco_saida ? $this->almoco_saida->hora : $this->horario_almoco_saida;
-		return  date('H:i', strtotime($horario) + 3600);
-	}
 
-	public function getHorarioJornadaAttribute($value)
-	{
-		$jornada = strtotime($this->entrada->hora) + strtotime('09:00:00');
-
-		if ($this->tempoIntervalo != '00:00') {
-			$jornada += strtotime($this->tempoIntervalo);
-		}
-
-		return date('H:i', $jornada);
-	}
-
-	public function getHorarioTotalJornadaAttribute($value)
-	{
-		if(!$this->saida) {
+		if ($this->intervalo == '00:00') {
 			return '00:00';
 		}
 
-		$jornadaPadrao = strtotime('09:00:00');
-		$entrada = strtotime($this->entrada->hora);
-		$intervalo = strtotime($this->tempoIntervalo);
-		$saida = strtotime($this->saida->hora ?? $this->horario_jornada);
-		$jornadaTotal = strtotime(date('H:i',$entrada+$jornadaPadrao+$intervalo));
-		$diferenca = $saida > $jornadaTotal ? $saida - $jornadaTotal : $jornadaTotal - $saida;
+		return gmdate('H:i', strtotime($this->intervalo) - 3600);
+	}
 
-		switch (true) {
-			case $saida > $jornadaTotal:
-				$tipo = '+';
-				break;
-			case $saida < $jornadaTotal:
-				$tipo = '-';
-				break;
-			case $diferenca == '00:00':
-				$tipo = '';
-				break;
-			default:
-				$tipo = '';
-				break;
+	public function getJornadaAttribute($value)
+	{
+		if (!$this->saida) {
+			return '00:00';
+		}
+
+		return gmdate('H:i', strtotime($this->saida->hora) - strtotime($this->entrada->hora));
+	}
+
+	public function getJornadaTotalAttribute($value)
+	{
+		if ($this->jornada == '00:00' || !$this->almoco_saida || !$this->almoco_retorno || !$this->saida) {
+			return '00:00';
+		}
+
+		$entradaTs = strtotime($this->entrada->hora);
+		$almocoSaidaTs = strtotime($this->almoco_saida ? $this->almoco_saida->hora : '00:00');
+		$almocoRetornoTs = strtotime($this->almoco_retorno ? $this->almoco_retorno->hora : '00:00');
+		$saidaTs = strtotime($this->saida ? $this->saida->hora : '00:00');
+
+		$antes_almoco = $almocoSaidaTs - $entradaTs;
+		$depois_almoco = $saidaTs - $almocoRetornoTs;
+
+		$jornadaPadrao = strtotime('08:00');
+		$jornada =  $antes_almoco + $depois_almoco + strtotime($this->intervalo_total);
+		$jornadaTotal = $jornada > $jornadaPadrao ? $jornada - $jornadaPadrao : $jornadaPadrao - $jornada;
+
+		if ($jornada == $jornadaPadrao) {
+			return '00:00';
+		}
+
+		$tipo = match (true) {
+			$jornada > $jornadaPadrao => '+',
+			$jornada < $jornadaPadrao => '-',
 		};
 
-		return "{$tipo}" . gmdate('H:i', $diferenca);
+		$totalFormatado = date('H:i', $jornadaTotal);
+
+		return "{$tipo} {$totalFormatado}";
+	}
+
+	public function getHorarioAlmocoSaidaAttribute($value)
+	{
+
+		if (!$this->entrada) {
+			return '00:00';
+		}
+
+		return date('H:i', (strtotime($this->entrada->hora) + strtotime('06:00')));
+	}
+
+	public function getHorarioAlmocoRetornoAttribute($value)
+	{
+		$horaSaida = !$this->almoco_saida ? strtotime($this->horario_almoco_saida)  : strtotime($this->almoco_saida->hora);
+		return date('H:i', ( $horaSaida + strtotime('01:00')));
+	}
+
+	public function getHorarioSaidaAttribute($value)
+	{
+
+		if (!$this->entrada) {
+			return '00:00';
+		}
+
+		return date('H:i', (strtotime($this->entrada->hora) + strtotime('09:00')));
 	}
 }

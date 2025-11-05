@@ -3,13 +3,20 @@
 @section('content')
 <!-- <div> -->
 <div class="row">
-	<div class="col text-center">
+	<div class="col text-center d-flex justify-content-between align-items-start">
 		<h1>Marcações do ponto</h1>
+		<div>
+			<a href="{{ route('jobs.pontos.create') }}">Marcar</a>
+			<a href="{{ route('jobs.dashboard.index') }}" title="Dashboard">
+				<!-- <i class="bi bi-plus-square fs-4"></i> -->
+				Dash
+			</a>
+		</div>
 	</div>
 </div>
 <div class="row">
 	<div class="col">
-		<a href="{{ route('jobs.pontos.create') }}">Marcar</a>
+
 		<table class="table table-responsive">
 			<tr>
 				<td>Data</td>

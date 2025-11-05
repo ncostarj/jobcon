@@ -9,7 +9,6 @@ use App\Domain\Jobs\Models\Ponto;
 use App\Domain\Jobs\Repositories\HorarioRepository;
 use App\Domain\Jobs\Repositories\PontoRepository;
 use App\Domain\Jobs\Repositories\UsuarioRepository;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -53,11 +52,11 @@ class PontoService implements ServiceInterface
 				$horarioModel = $this->horarioRepository->search($searchData)->first();
 
 				if (!$horarioModel) {
-					$this->horarioRepository->update($horarioModel->id, $horarioDTO->toArray());
+					$this->horarioRepository->createWithPonto($horarioDTO->toArray());
 				}
 
 				if ($horarioModel) {
-					$this->horarioRepository->createWithPonto($horarioDTO->toArray());
+					$this->horarioRepository->update($horarioModel->id, $horarioDTO->toArray());
 				}
 			});
 		return $this->pontoRepository->update($id, $pontoDTO->toArray());
@@ -91,7 +90,7 @@ class PontoService implements ServiceInterface
 
 		$horarios = collect($request->input('horarios'));
 		$horarios->each(function ($horario) use ($ponto) {
-			$horarioDTO = HorarioDTO::fromArray(array_merge($horario, [ 'ponto' => $ponto ]));
+			$horarioDTO = HorarioDTO::fromArray(array_merge($horario, ['ponto' => $ponto]));
 			$horarioModel = $this->horarioRepository->search(['ponto_id' => $ponto->id, 'tipo' => $horario['tipo']])->first();
 			if (!$horarioModel) {
 				$this->horarioRepository->createWithPonto($horarioDTO->toArray());
@@ -109,6 +108,42 @@ class PontoService implements ServiceInterface
 	public function getMonths(array $criteria): Collection
 	{
 		return $this->pontoRepository->getMonths($criteria);
+	}
+
+
+	public function calculateSubtotalHoras(array $criteria)
+	{
+		$credito = strtotime("00:00");
+		$debito = strtotime("00:00");
+
+		// ['mes' => date('m'), 'usuario_id' => User::where('name', 'Newton Gonzaga Costa')->first()->id]
+		foreach ($this->pontoRepository->search($criteria) as $ponto) {
+
+			$entrada = $ponto->entrada ? $ponto->entrada->hora->format('H:i'):'00:00';
+			$almoco_saida = $ponto->almoco_saida ? $ponto->almoco_saida->hora->format('H:i'):'00:00';
+			$almoco_retorno = $ponto->almoco_retorno ? $ponto->almoco_retorno->hora->format('H:i'):'00:00';
+			$saida = $ponto->saida ? $ponto->saida->hora->format('H:i'):'00:00';
+
+			preg_match('/(?<tipo>[+-])\s(?<hora>[0-9]{2}:[0-9]{2})/',$ponto->jornada_total, $match);
+
+			$tipo = $match['tipo']??'';
+			$hora = $match['hora']??'00:00';
+
+			if($tipo == '' && $hora == '00:00') {
+				continue;
+			}
+
+			match(true) {
+				$match['tipo'] == '+' => $credito += strtotime($match['hora']),
+				$match['tipo'] == '-' => $debito += strtotime($match['hora'])
+			};
+		}
+
+		return [
+			'credito' => date('H:i', $credito),
+			'debito' => date('H:i', $debito)
+		];
+
 	}
 
 	// protected $repository;
