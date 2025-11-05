@@ -68,9 +68,9 @@ Route::group(['middleware' => 'auth'], function(){
 				Route::get('/', [ FeriasController::class, 'index' ])->name('index');
 				Route::get('/criar', [ FeriasController::class, 'create' ])->name('create');
 				Route::post('/salvar', [ FeriasController::class, 'store' ])->name('store');
-				Route::get('/editar/{ferias}', [ FeriasController::class, 'edit' ])->name('edit');
-				Route::put('/{ferias}/atualizar', [ FeriasController::class, 'update' ])->name('update');
-				Route::delete('/{ferias}/apagar', [ FeriasController::class, 'destroy' ])->name('destroy');
+				Route::get('/editar/{id}', [ FeriasController::class, 'edit' ])->name('edit');
+				Route::put('/{id}/atualizar', [ FeriasController::class, 'update' ])->name('update');
+				Route::delete('/{id}/apagar', [ FeriasController::class, 'destroy' ])->name('destroy');
 			});
 		});
 
