@@ -17,7 +17,7 @@ services:
     networks:
       homelab:
   jobconapp:
-    build: ./docker/config/php/74
+    build: ./docker/config/php/82
     container_name: jobconapp
     working_dir: /var/www/newton/jobcon
     volumes:
