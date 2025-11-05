@@ -339,7 +339,7 @@
 					.then((response) => {
 						this.pontoLoading = false;
 						this.listaPontos = response.data;
-						// this.calcularSubtotal();
+						this.calcularSubtotal();
 					})
 					.catch(error => {
 						console.error(error);
@@ -357,7 +357,7 @@
 				}
 
 				this.gateway
-					.get(`{{ route('api.v1.jobs.pontos.calcular_subtotal') }}?mes=${month}&ano=${year}&usuario_id=${this.pontoAssignForm.usuarioId}`)
+					.get(`{{ route('api.v1.jobs.pontos.calcular_subtotal_horas') }}?mes=${month}&ano=${year}&usuario_id=${this.pontoAssignForm.usuarioId}`)
 					.then((response) => {
 						this.subtotalPontos = response.data;
 					})
@@ -387,6 +387,7 @@
 				this.gateway
 					.get(`{{ route('api.v1.jobs.pontos.resumo') }}?mes=${month}&ano=${year}&usuario_id=${this.pontoAssignForm.usuarioId}`)
 					.then((response) => {
+						console.log(response);
 						this.resumos = response.data;
 					})
 					.catch(error => {
@@ -769,6 +770,7 @@
 				this.gateway
 					.get(`{{ route('api.v1.jobs.ferias.listar') }}?usuario_id=${this.usuarioId}&limite=3`)
 					.then((response) => {
+						console.log(response)
 						this.listaFerias = response.data;
 						this.feriasLoading = false;
 					}).catch(error => {
@@ -786,7 +788,7 @@
 		},
 		computed: {},
 		created: function() {
-			// this.listar();
+			this.listar();
 			// this.verificarFerias();
 		},
 	});
@@ -963,18 +965,17 @@
 								<td>@{{ ponto.entrada }}</td>
 								<td>
 									<span v-if="ponto.almoco_saida != '-'">@{{ ponto.almoco_saida }}</span>
-
 									<span v-if="ponto.almoco_saida == '-'">@{{ ponto.horario_almoco_saida }} (prev)</span>
 								</td>
 								<td>
 									<span v-if="ponto.almoco_retorno != '-'">@{{ ponto.almoco_retorno }}</span>
-									<span v-if="ponto.almoco_saida != '-' && ponto.horario_intervalo != '00:00'" :class="[ponto.horario_intervalo != '00:00' ? 'text-warning' : '']">(@{{ ponto.horario_intervalo }})</span>
-									<span v-if="ponto.almoco_retorno == '-' ">@{{ ponto.horario_retorno }} (prev)</span>
+									<span v-if="ponto.intervalo_total != '00:00'" :class="[ponto.intervalo_total != '00:00' ? 'text-warning' : '']">(@{{ ponto.intervalo_total }})</span>
+									<span v-if="ponto.almoco_retorno == '-' ">@{{ ponto.horario_almoco_retorno }} (prev)</span>
 								</td>
 								<td>
 									<span v-if="ponto.saida != '-'">@{{ ponto.saida }}</span>
-									<span v-if="ponto.saida == '-'">@{{ ponto.horario_jornada }} (prev)</span>
-									<span v-if="ponto.horario_total_jornada!='00:00'" :class="[ponto.horario_total_jornada!='00:00' ? 'text-warning' : '']">@{{ ponto.horario_total_jornada }}
+									<span v-if="ponto.saida == '-'">@{{ ponto.horario_saida }} (prev)</span>
+									<span v-if="ponto.jornada_total != '00:00'" :class="[ponto.jornada_total!='00:00' ? 'text-warning' : '']">(@{{ ponto.jornada_total }})</span>
 								</td>
 								<!--
 								<td>@{{ ponto.credito }}</td>
@@ -985,22 +986,13 @@
 								<td colspan="12">Nenhum ponto cadastrado até o momento.</td>
 							</tr>
 							<tr>
-								<td class="text-end" colspan="5">Subtotal:</td>
-								<td class="text-success"><strong>@{{ subtotalPontos.credito }}</strong></td>
-								<td class="text-danger"><strong>@{{ subtotalPontos.debito }}</strong></td>
+								<td class="text-end" colspan="6">Subtotal:</td>
+								<td ><span class="text-success"><strong>@{{ subtotalPontos.credito }}</strong></span> <span class="text-danger"><strong>@{{ subtotalPontos.debito }}</strong></span></td>
 							</tr>
 							<tr>
-								<td class="text-end" colspan="5">PortalRH</td>
-								<td class="text-success">@{{ bancoHoras.credito }}</td>
-								<td class="text-danger">@{{ bancoHoras.debito }}</td>
+								<td class="text-end" colspan="6">PortalRH</td>
+								<td><span class="text-success">@{{ bancoHoras.credito }}</span> <span class="text-danger">@{{ bancoHoras.debito }}</span></td>
 							</tr>
-							<!--
-							<tr>
-								<td colspan="5">&nbsp;</td>
-								<td>Saldo Anterior: @{{ bancoHoras.saldo_anterior }}</td>
-								<td>Saldo Atual: @{{ bancoHoras.saldo_atual }}</td>
-							</tr>
-							-->
 						</table>
 					</div>
 

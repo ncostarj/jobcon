@@ -8,25 +8,25 @@
 			event.preventDefault(); // optional: prevents the default link behavior
 			const url = event.currentTarget.dataset.route;
 			console.log(url);
-			fetch(url, {
-					method: 'DELETE',
-					headers: {
-						'Content-Type': 'application/json',
-						'X-CSRF-TOKEN': '{{ csrf_token() }}', // Send CSRF token
-						// 'Authorization': 'Bearer seu_token_aqui' // se necessário
-					}
-				})
-				.then(response => {
-					if (response.ok) {
-						console.log('Recurso deletado com sucesso.');
-					} else {
-						console.error('Erro ao deletar:', response.status);
-					}
-					window.location.reload();
-				})
-				.catch(error => {
-					console.error(error);
-				});
+			// fetch(url, {
+			// 		method: 'DELETE',
+			// 		headers: {
+			// 			'Content-Type': 'application/json',
+			// 			'X-CSRF-TOKEN': '{{ csrf_token() }}', // Send CSRF token
+			// 			// 'Authorization': 'Bearer seu_token_aqui' // se necessário
+			// 		}
+			// 	})
+			// 	.then(response => {
+			// 		if (response.ok) {
+			// 			console.log('Recurso deletado com sucesso.');
+			// 		} else {
+			// 			console.error('Erro ao deletar:', response.status);
+			// 		}
+			// 		window.location.reload();
+			// 	})
+			// 	.catch(error => {
+			// 		console.error(error);
+			// 	});
 		});
 </script>
 @endsection
@@ -34,7 +34,13 @@
 <div class="row mt-2">
 	<div class="col text-center d-flex justify-content-between align-items-start">
 		<h1>Lista de Contracheques</h1>
-		<a href="{{ route('jobs.contracheques.create') }}" title="Incluir Contracheques"><i class="bi bi-plus-square fs-4"></i></a>
+		<div>
+			<a href="{{ route('jobs.contracheques.create') }}" title="Incluir Contracheques"><i class="bi bi-plus-square fs-4"></i></a>
+			<a href="{{ route('jobs.dashboard.index') }}" title="Dashboard">
+				<!-- <i class="bi bi-plus-square fs-4"></i> -->
+				Dash
+			</a>
+		</div>
 	</div>
 </div>
 <div class="row">
