@@ -28,8 +28,11 @@
 @section('content')
 
 <div class="row">
-	<div class="col">
-		<h1 class="text-center">Férias</h1>
+	<div class="col text-center d-flex justify-content-between align-items-start">
+		<h1>Férias</h1>
+		<div>
+			<a href="{{ route('jobs.ferias.index') }}" title="adicionar"><i class="bi bi-arrow-left-circle-fill fs-4"></i></a>
+		</div>
 	</div>
 </div>
 <div class="row" id="horarioApp">

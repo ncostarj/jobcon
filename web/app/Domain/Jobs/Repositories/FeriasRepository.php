@@ -1,55 +1,64 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Domain\Jobs\Repositories;
 
-use App\Models\Ferias;
-use Illuminate\Support\Facades\Log;
+use App\Domain\Jobs\Contracts\RepositoryInterface;
+use App\Domain\Jobs\DTOs\FeriasDTO;
+use App\Domain\Jobs\Models\Ferias;
+use Illuminate\Support\Collection;
 
-class FeriasRepository
+class FeriasRepository implements RepositoryInterface
 {
 	private $model;
 
-	public function __construct() {
-		$this->model = Ferias::class;
-	}
-
-	public function get(array $data = [])
+	public function __construct(Ferias $ferias)
 	{
-		extract($data??[]);
-
-		$rs = $this->model::query()
-			->with('usuario')
-			->where([
-				[ 'user_id', '=', $usuario_id ]
-			])
-			->orderBy('inicio', 'desc');
-
-		if(isset($data['limite'])) {
-			$rs->limit($data['limite']);
-		}
-
-		return 	$rs->get();
+		$this->model = $ferias;
 	}
 
-	public function insert(array $data)
+	public function search(array $data = []): Collection
+	{
+		return $this->model
+			->where('user_id', $data['usuario_id'])
+			->orderBy('inicio', 'desc')
+			->limit($data['limite'] ?? 5)
+			->get();
+	}
+
+	public function find(string $id): ?Ferias
+	{
+		return $this->model->findOrFail($id);
+	}
+
+	public function create(array $data): Ferias
 	{
 		return $this->model::create($data);
 	}
 
-	public function update(string $id, array $data) {
-		return $this->model::where('id', $id)
-			->fill($data)
-			->update($data);
+	public function createWithUser(FeriasDTO $dto) {
+		$ferias = $dto->toArray();
+		$this->model->usuario()->associate($ferias['usuario']);
+		$this->model->fill($ferias)->save();
+		return $this->model;
 	}
 
-	public function delete($id) {
-		return $this->model::where('id', $id)
-			->delete();
+	public function update(string $id, array $data): bool
+	{
+		$model = $this->model->find($id);
+		$model->usuario()->associate($data['usuario']);
+		return $model->fill($data)->update();
 	}
 
-	public function getUltimaFeriasAgenda($data) {
+	public function delete($id): bool
+	{
+		$model = $this->find($id);
+		return $model->delete();
+	}
+
+	public function getUltimaFeriasAgenda($data)
+	{
 		return $this->model::query()
-			->when($data['usuario_id'], function($query) use($data) {
+			->when($data['usuario_id'], function ($query) use ($data) {
 				return $query->where('user_id', $data['usuario_id']);
 			})
 			->orderBy('inicio', 'desc')->take(1)->first();

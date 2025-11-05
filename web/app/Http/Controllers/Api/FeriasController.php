@@ -1,50 +1,84 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Ferias;
-use App\Models\User;
+use App\Domain\Jobs\Resources\FeriasResource;
 use Illuminate\Http\Request;
+use App\Domain\Jobs\Services\FeriasService;
 
-class FeriasController extends Controller
+class FeriasController extends BaseApiController
 {
-    //
+	public function index(FeriasService $feriasService, Request $request)
+	{
+		try {
+			$response = $this->response(200, trans('api.200'), FeriasResource::toArray($feriasService->search($request)));
+		} catch (\Throwable $th) {
+			$this->log($th);
+			$response = $this->response(500, trans('api.500'));
+		}
+		return $response;
+	}
 
-	public function index(Request $request) {
-		$lista_ferias = Ferias::orderBy('inicio','desc')->get();
-		// dd($lista_ferias);
-        return view('jobs.ferias.index', compact('lista_ferias'));
-    }
+	public function create()
+	{
+		try {
+			$response = $this->response(200, trans('api.200'), FeriasResource::toArray($feriasService->search($request)));
+		} catch (\Throwable $th) {
+			$this->log($th);
+			$response = $this->response(500, trans('api.500'));
+		}
+		return $response;
+		// $usuario_id = User::where([['email_comercial', '=', 'newton.costa@oliveiratrust.com.br']])->first()->id;
+		// $action = route('jobs.ferias.store');
+		// return view('jobs.ferias.form', compact('action', 'usuario_id'));
+	}
 
-	public function create() {
-		$usuario_id = User::where([ ['email_comercial', '=', 'newton.costa@oliveiratrust.com.br'] ])->first()->id;
-		$action = route('jobs.ferias.store');
-        return view('jobs.ferias.form', compact('action', 'usuario_id'));
-    }
+	public function store(Request $request)
+	{
+		try {
+			$response = $this->response(200, trans('api.200'), FeriasResource::toArray($feriasService->search($request)));
+		} catch (\Throwable $th) {
+			$this->log($th);
+			$response = $this->response(500, trans('api.500'));
+		}
+		return $response;
+		// Salvar dados na base de dados
+		// $ferias = new Ferias;
+		// $ferias->fill($request->only('inicio', 'fim', 'qtd_dias', 'observacao'));
+		// $ferias->usuario()->associate(User::where('id', $request->usuario_id)->first());
+		// $ferias->save();
+		// return redirect()->route('jobs.ferias.index');
+	}
 
-	public function store(Request $request) {
-        // Salvar dados na base de dados
-		$ferias = new Ferias;
-		$ferias->fill($request->only('inicio', 'fim', 'qtd_dias','observacao'));
-		$ferias->usuario()->associate(User::where('id', $request->usuario_id)->first());
-		$ferias->save();
-		return redirect()->route('jobs.ferias.index');
-    }
+	public function update(string $id, Request $requests)
+	{
+		try {
+			$response = $this->response(200, trans('api.200'), FeriasResource::toArray($feriasService->search($request)));
+		} catch (\Throwable $th) {
+			$this->log($th);
+			$response = $this->response(500, trans('api.500'));
+		}
+		return $response;
+		// $ferias->fill($request->only('inicio', 'fim', 'qtd_dias', 'observacao'));
+		// $ferias->usuario()->associate(User::where('id', $request->usuario_id)->first());
+		// $ferias->save();
+		// return redirect()->route('jobs.ferias.index');
+	}
 
-	public function edit(Ferias $ferias) {
-		$usuario_id = User::where([ ['email_comercial', '=', 'newton.costa@oliveiratrust.com.br'] ])->first()->id;
-		$action = route('jobs.ferias.update', [ 'ferias' => $ferias->id ]);
-        return view('jobs.ferias.form', compact('ferias','action', 'usuario_id'));
-    }
+	public function destroy($ferias)
+	{
+		// Apagar dados da base de dados
+		try {
+			$response = $this->response(200, trans('api.200'), FeriasResource::toArray($feriasService->search($request)));
+		} catch (\Throwable $th) {
+			$this->log($th);
+			$response = $this->response(500, trans('api.500'));
+		}
+		return $response;
+	}
 
-	public function update(Request $request, Ferias $ferias) {
-        $ferias->fill($request->only('inicio', 'fim', 'qtd_dias','observacao'));
-		$ferias->usuario()->associate(User::where('id', $request->usuario_id)->first());
-		$ferias->save();
-		return redirect()->route('jobs.ferias.index');
-    }
-
-	public function destroy($ferias) {
-        // Apagar dados da base de dados
-    }
+	public function verifyDiasAteFerias(Request $request)
+	{
+		logger($request->all());
+	}
 }

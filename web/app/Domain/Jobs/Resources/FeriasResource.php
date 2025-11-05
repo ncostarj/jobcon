@@ -1,38 +1,23 @@
 <?php
 
-namespace App\Resources;
+namespace App\Domain\Jobs\Resources;
+
+use Illuminate\Support\Collection;
 
 class FeriasResource
 {
-
-	protected $resources;
-
-	public function __construct($resources)
+	public static function toArray(Collection $collection)
 	{
-		$this->resources = $resources;
-	}
-
-	public function toObject($resource) {
-		return (object) [
-			'id' => $resource->id,
-			'inicio' => $resource->inicio->format('d/m/Y'),
-			'fim' => $resource->fim->format('d/m/Y'),
-			'qtd_dias' => $resource->qtd_dias,
-			'ativo' => $resource->ativo ? 'Sim' : 'Não',
-			'observacao' => $resource->observacao,
-			'link' => route('jobs.ferias.edit', [ 'ferias' => $resource->id ])
-		];
-	}
-
-	public function toArray()
-	{
-		return $this->resources->map(function($resource){
-			return $this->toObject($resource);
+		return $collection->map(function ($resource) {
+			return [
+				'id' => $resource->id,
+				'inicio' => $resource->inicio->format('d/m/Y'),
+				'fim' => $resource->fim->format('d/m/Y'),
+				'qtd_dias' => $resource->qtd_dias,
+				'ativo' => $resource->ativo ? 'Sim' : 'Não',
+				'observacao' => $resource->observacao,
+				'link' => route('jobs.ferias.edit', [ 'id' => $resource->id ])
+			];
 		});
-	}
-
-	public function toJson()
-	{
-		return json_encode($this->toArray());
 	}
 }
