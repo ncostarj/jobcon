@@ -1,0 +1,49 @@
+# ==========================
+# Arquivos de controle
+# ==========================
+.git
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# ==========================
+# Dependências locais
+# ==========================
+node_modules 
+vendor
+
+# ==========================
+# Cache e build temporários
+# ==========================
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pnpm-debug.log
+composer.lock
+.env
+.env.*
+storage/*.key
+storage/framework/*
+storage/logs/*
+bootstrap/cache/*
+.idea
+.vscode
+*.log
+*.tmp
+*.bak
+
+# ==========================
+# Sistema operacional
+# ==========================
+.DS_Store
+Thumbs.db
+
+# ==========================
+# Arquivos de build do frontend
+# (Se você compila assets dentro do container)
+# ==========================
+public/hot
+public/storage
+public/js/*
+public/css/*
