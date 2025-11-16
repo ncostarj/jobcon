@@ -890,10 +890,10 @@
 					<div class="col-3">
 						<h1>@{{ calendario.hoje.mes }} tem</h1>
 						<ul class="list-group mb-5">
-							<li class="list-group-item">@{{ calendario.qtdDiasMes }} dias</li>
+							<li class="list-group-item">@{{ calendario.qtdDiasMes }} dias corridos</li>
 							<li class="list-group-item">@{{ calendario.qtdDiaUteisMes }} dias úteis</li>
-							<li class="list-group-item">@{{ calendario.qtdDiasAteFimMes }} dias até o fim do mês</li>
-							<li class="list-group-item">@{{ calendario.qtdDiasUteisAteFimMes }} dias uteis até o fim do mês</li>
+							<li class="list-group-item">@{{ calendario.qtdDiasAteFimMes }} dias corridos até o fim do mês</li>
+							<li class="list-group-item">@{{ calendario.qtdDiasUteisAteFimMes }} dias úteis até o fim do mês</li>
 							<li class="list-group-item">@{{ calendario.qtdDiasAtePagamento }} dias até o pagamento</li>
 							<!-- <li class="list-group-item">a<span v-if="calendario.diferenca > 0">@{{ calendario.diaPagamentoPrevisto }}</span></li> -->
 						</ul>

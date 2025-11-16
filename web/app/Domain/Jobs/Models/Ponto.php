@@ -89,7 +89,7 @@ class Ponto extends Model
 			return '00:00';
 		}
 
-		return gmdate('H:i', strtotime($this->saida->hora) - strtotime($this->entrada->hora));
+		return gmdate('H:i', strtotime($this->saida->hora) - (strtotime($this->entrada->hora)+strtotime($this->intervalo)));
 	}
 
 	public function getJornadaTotalAttribute($value)
@@ -98,16 +98,8 @@ class Ponto extends Model
 			return '00:00';
 		}
 
-		$entradaTs = strtotime($this->entrada->hora);
-		$almocoSaidaTs = strtotime($this->almoco_saida ? $this->almoco_saida->hora : '00:00');
-		$almocoRetornoTs = strtotime($this->almoco_retorno ? $this->almoco_retorno->hora : '00:00');
-		$saidaTs = strtotime($this->saida ? $this->saida->hora : '00:00');
-
-		$antes_almoco = $almocoSaidaTs - $entradaTs;
-		$depois_almoco = $saidaTs - $almocoRetornoTs;
-
 		$jornadaPadrao = strtotime('08:00');
-		$jornada =  $antes_almoco + $depois_almoco + strtotime($this->intervalo_total);
+		$jornada =  strtotime($this->jornada);
 		$jornadaTotal = $jornada > $jornadaPadrao ? $jornada - $jornadaPadrao : $jornadaPadrao - $jornada;
 
 		if ($jornada == $jornadaPadrao) {
@@ -142,11 +134,11 @@ class Ponto extends Model
 
 	public function getHorarioSaidaAttribute($value)
 	{
-
 		if (!$this->entrada) {
 			return '00:00';
 		}
 
-		return date('H:i', (strtotime($this->entrada->hora) + strtotime('09:00')));
+		$horarioSaida = strtotime($this->entrada->hora) + strtotime($this->intervalo_total) + strtotime('09:00');
+		return date('H:i', $horarioSaida);
 	}
 }
