@@ -29,23 +29,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg \
     && rm -rf /var/lib/apt/lists/*
 
-RUN sed -i -- 's/# pt_BR.UTF-8 UTF-8/pt_BR.UTF-8 UTF-8/g' /etc/locale.gen \
-    && locale-gen \
-    && sed -i -- 's/Etc\/UTC/America\/Sao_Paulo/g' /etc/timezone \
-    && sed -i -- 's/# alias ll/alias ll/g' /root/.bashrc \
-    && unlink /etc/localtime \
-    && ln -s /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
-    # && sed -i -- 's/localhost/localhost,big.server.com/g' /etc/hosts
-
-#
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
-    && apt-get update && apt-get install -y nodejs \
-    && npm i -g forever pm2 nodemon @angular/cli
+# Node.js 24.x (LTS) + package managers
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g npm@latest yarn pnpm forever pm2 nodemon @angular/cli
 
 ENV LC_ALL pt_BR.UTF-8
 
 # Copy conf file
-COPY conf/nginx/default.conf /etc/nginx/conf.d
+COPY conf/nginx/nginx.conf /etc/nginx/conf.d
 
 # CMD forever start /var/www/html/app/server.js
 
