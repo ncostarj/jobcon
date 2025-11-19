@@ -12,7 +12,7 @@ class PontoExport extends Command
      *
      * @var string
      */
-    protected $signature = 'exportar:ponto';
+    protected $signature = 'jobcon:ponto_exportar';
 
     /**
      * The console command description.

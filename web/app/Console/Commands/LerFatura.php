@@ -12,7 +12,7 @@ class LerFatura extends Command
      *
      * @var string
      */
-    protected $signature = 'jobcon:ler-fatura';
+    protected $signature = 'jobcon:ler_fatura';
 
     /**
      * The console command description.

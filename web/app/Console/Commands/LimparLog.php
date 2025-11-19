@@ -11,7 +11,7 @@ class LimparLog extends Command
      *
      * @var string
      */
-    protected $signature = 'log:limpar';
+    protected $signature = 'jobcon:limpar_log';
 
     /**
      * The console command description.

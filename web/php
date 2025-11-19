@@ -1,1 +1,1 @@
-docker-compose exec jobconapp php $*
+docker compose exec jobconapp php $*

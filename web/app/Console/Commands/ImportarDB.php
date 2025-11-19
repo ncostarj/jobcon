@@ -12,14 +12,15 @@ class ImportarDB extends Command
      *
      * @var string
      */
-    protected $signature = 'bd:importar';
+    protected $signature = 'jobcon:db_import
+							{--t|tipo= : Importa a base a partir de um arquivo csv ou txt}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Comando para importar o database';
+    protected $description = 'Script para exportar a base de dados inteira do projeto.';
 
     /**
      * Create a new command instance.
@@ -31,16 +32,7 @@ class ImportarDB extends Command
         parent::__construct();
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
-    {
-		$this->info('Inicio');
-		$this->info('');
-
+	private function fromCsv() {
 		$migrations = DB::table('migrations')->get();
 
 		$tabelas = [];
@@ -106,42 +98,28 @@ class ImportarDB extends Command
 			$diff = $finishTime - $startTime;
 			$this->info("{$tabela} Fim {$diff}");
 		}
+	}
 
-		// if ($handle = opendir(public_path("exports/database"))) {
-		// 	/* Esta é a forma correta de percorrer o diretório */
-		// 	while (false !== ($arquivo = readdir($handle)))
-		// 	{
-		// 		if(in_array($arquivo, ['.','..'])) {
-		// 			continue;
-		// 		}
+	private function fromTxt() {
+		$migrations = DB::table('migrations')->get();
 
-		// 		dump("$arquivo");
-		// 		$contador = 0;
-		// 		$registros = [];
-		// 		$arquivoCsv = fopen(public_path("exports/database/{$arquivo}"), 'r');
-		// 		while ($row = fgetcsv($arquivoCsv, 1000, ";")) {
-		// 			if($contador == 0){
-		// 				$header = $row;
-		// 				$contador++;
-		// 				continue;
-		// 			}
-		// 			$linha = array_combine($header, $row);
-		// 			foreach($linha as $key => $value) {
-		// 				$linha[$key] = $value!=""? $value : null;
-		// 			}
-		// 			$registros[] = $linha;
-		// 			$contador++;
-		// 		}
-		// 		fclose($arquivoCsv);
+		$tabelas = [];
+	}
 
-		// 		$tabela = preg_replace("/(.*)(.csv)/","$1",$arquivo);
-		// 		echo "$tabela\n";
-		// 		DB::table($tabela)->insert($registros);
-		// 		dd('fim tabela');
-		// 	}
-		// }
+    /**
+     * Execute the console command.
+     *
+     * @return int
+     */
+    public function handle()
+    {
+		$this->info('Iniciando o import de banco');
 
-		// $arquivo = fopen(public_path("exports/database/{$nomeTabela}.csv"),'w');
-        // return 0;
+		match (true) {
+			$this->option('tipo') == 'csv' => $this->fromCsv(),
+			$this->option('tipo') == 'txt' => $this->fromTxt()
+		};
+
+		$this->info('Finalizando o import de banco');
     }
 }

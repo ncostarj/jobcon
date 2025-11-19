@@ -14,14 +14,14 @@ class TestMongoClient extends Command
      *
      * @var string
      */
-    protected $signature = 'mongodb:test_client';
+    protected $signature = 'jobcon:test_mongo_client';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Script para testar a conexão com mongodb.';
 
     /**
      * Create a new command instance.

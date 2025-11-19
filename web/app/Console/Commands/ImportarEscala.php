@@ -18,14 +18,14 @@ class ImportarEscala extends Command
 	 *
 	 * @var string
 	 */
-	protected $signature = 'escala:importar {data? : Data no formato Y-m-d}';
+	protected $signature = 'jobcon:escala_import {data? : Data no formato Y-m-d}';
 
 	/**
 	 * The console command description.
 	 *
 	 * @var string
 	 */
-	protected $description = 'Importa a escala a partir de arquivo XLS';
+	protected $description = 'script para importar a escala de trabalho a partir de um arquivo xls.';
 
 	private const MINIMUM_ROWS = 2;
 	private const MARKER = 'x';

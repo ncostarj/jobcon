@@ -12,7 +12,7 @@ class PontoImport extends Command
      *
      * @var string
      */
-    protected $signature = 'importar:ponto';
+    protected $signature = 'jobcon:ponto_importar';
 
     /**
      * The console command description.
