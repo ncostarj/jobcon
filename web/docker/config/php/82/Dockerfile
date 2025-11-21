@@ -33,7 +33,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
 # Node.js 24.x (LTS) + package managers
 RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && \
     apt-get install -y nodejs && \
-    npm install -g npm@latest yarn pnpm
+    npm install -g npm@latest yarn pnpm @vitejs/plugin-vue @vitejs/plugin-vue-jsx --save-dev 
 
 # Ajustar permissões de usuário
 RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
