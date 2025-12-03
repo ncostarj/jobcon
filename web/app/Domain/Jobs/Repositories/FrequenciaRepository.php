@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Domain\Jobs\Repositories;
 
-use App\Models\Frequencia;
+use App\Domain\Jobs\Models\Frequencia;
 use Illuminate\Support\Facades\Log;
 
 class FrequenciaRepository
@@ -15,13 +15,9 @@ class FrequenciaRepository
 
 	public function get(array $data = [])
 	{
-		extract($data??[]);
-
 		return $this->model::query()
 			->with('usuario')
-			->when($data['usuario_id'], function($query) use ($data){
-				return $query->where('user_id', $data['usuario_id']);
-			})
+			->where('user_id', $data['usuario_id'])
 			->get();
 
 	}

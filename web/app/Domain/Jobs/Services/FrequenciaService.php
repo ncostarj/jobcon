@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Services;
+namespace App\Domain\Jobs\Services;
 
 use Carbon\Carbon;
-use App\Services\BaseService;
-use App\Repositories\FrequenciaRepository;
-use App\Resources\FrequenciaResource;
+use App\Domain\Jobs\Repositories\FrequenciaRepository;
+use App\Domain\Jobs\Resources\FrequenciaResource;
 
 class FrequenciaService extends BaseService
 {
@@ -28,12 +27,10 @@ class FrequenciaService extends BaseService
 	}
 
 	public function getLastSaldo(array $dados = []) {
-		$ultimoBH = $this->repository->get($dados)
+		return $this->repository->get($dados)
 			->sortByDesc([
 				fn ($a, $b) => $b['data'] <=> $a['data']
 			])
 			->first();
-
-		return $this->defaultReponse(200, 'Dados retornados com sucesso.', (new FrequenciaResource([]))->toObject($ultimoBH));
 	}
 }

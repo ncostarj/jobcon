@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\CalendarioController;
 use App\Http\Controllers\Api\ContrachequeController;
 use App\Http\Controllers\Api\FeriasController;
+use App\Http\Controllers\Api\FrequenciaController;
 use App\Http\Controllers\Api\PontoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,18 +41,8 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 		});
 
 		Route::prefix('ferias')->name('ferias.')->group(function () {
-
 			Route::name('listar')->get('listar', [ FeriasController::class, 'index' ]);
-
 			Route::name('verificar')->get('verificar', [ FeriasController::class, 'verifyDiasAteFerias' ]);
-
-			// Route::name('listar')->get('listar', function (Request $request, FeriasService $feriasService) {
-			// 	return $feriasService->get($request->all());
-			// });
-
-			// Route::name('verificar')->get('verificar', function (Request $request, FeriasService $feriasService) {
-			// 	return $feriasService->verifyDiasAteFerias($request->all());
-			// });
 		});
 
 
@@ -59,32 +50,34 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
 			Route::name('index')->get('/', [CalendarioController::class, 'index']);
 
-			// Route::name('index')->get('/', function (Request $request, CalendarioService $calendarioService) {
-			// 	return $calendarioService->showCalendario();
-			// });
-
-			Route::name('listar_semana_atual')->get('/listar_semana_atual', function (Request $request, CalendarioService $calendarioService) {
-				return $calendarioService->getCurrentWeek($request->all());
+			Route::name('listar_semana_atual')->get('/listar_semana_atual', function (Request $request) {
+				return [];
 			});
 
-			Route::name('listar_feriados')->get('/listar_feriados', function (Request $request, CalendarioService $calendarioService) {
-				return $calendarioService->getFeriados();
+			Route::name('listar_feriados')->get('/listar_feriados', function (Request $request) {
+				return [];
 			});
 		});
 
 		Route::prefix('frequencias')->name('frequencias.')->group(function () {
-			Route::name('listar')->get('listar', function (Request $request, FrequenciaService $frequenciaService) {
-				return $frequenciaService->get($request->all());
-			});
 
-			Route::name('listarUltimoSaldo')->get('listarUltimoSaldo', function (Request $request, FrequenciaService $frequenciaService) {
-				return $frequenciaService->getLastSaldo($request->all());
-			});
+
+			// Route::name('listar')->get('listar', function (Request $request, FrequenciaService $frequenciaService) {
+			// 	return $frequenciaService->get($request->all());
+			// });
+
+			Route::name('listarUltimoSaldo')->get('listarUltimoSaldo', [ FrequenciaController::class, 'indexUltimoSaldo' ]);
+			// Route::name('listarUltimoSaldo')->get('listarUltimoSaldo', function (Request $request, FrequenciaService $frequenciaService) {
+			// 	return $frequenciaService->getLastSaldo($request->all());
+			// });
 		});
 
 		Route::prefix('escalas')->name('escalas.')->group(function () {
-			Route::get('/listar', function (Request $request, EscalaService $escalaService) {
-				return $escalaService->search($request->all());
+			// Route::get('/listar', function (Request $request, EscalaService $escalaService) {
+			// 	return $escalaService->search($request->all());
+			// })->name('listar');
+			Route::get('/listar', function (Request $request) {
+				return [];
 			})->name('listar');
 		});
 

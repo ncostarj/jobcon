@@ -238,7 +238,7 @@
 				ordenacao: ''
 			},
 			listaPontos: [],
-			bancoHoras: {},
+			frequencia: {},
 			resumos: [],
 			subtotalPontos: {
 				debito: '00:00',
@@ -365,11 +365,11 @@
 						console.error(error);
 					});
 			},
-			obterBancoHoras: function() {
+			obterFrequencia: function() {
 				this.gateway
 					.get(`{{ route('api.v1.jobs.frequencias.listarUltimoSaldo') }}?usuario_id=${this.pontoAssignForm.usuarioId}`)
 					.then((response) => {
-						this.bancoHoras = response.data;
+						this.frequencia = response.data.frequencia;
 					})
 					.catch(error => {
 						console.error(error);
@@ -402,7 +402,7 @@
 			let anoAtual = hoje.getFullYear();
 			this.pontoSearchForm.mes = `${anoAtual}-${mesAtual}`;
 			this.pontoSearchForm.ordenacao = 'desc';
-			// this.obterBancoHoras();
+			this.obterFrequencia();
 			this.buscarMeses();
 			this.listar();
 			this.resumo();
@@ -881,7 +881,8 @@
 						</select>
 					</div>
 					<div class="col-8">
-						<a href="#" title="pesquisar" v-on:click.prevent="listar"><i class="bi bi-search fs-4"></i></a>
+						<a href="#" title="Pesquisar" v-on:click.prevent="listar"><i class="bi bi-search fs-4"></i></a>
+						<!-- <a href="#" title="Subir horas portal rh"><i class="bi bi-search fs-4"></i></a> -->
 					</div>
 				</div>
 
@@ -991,7 +992,7 @@
 							</tr>
 							<tr>
 								<td class="text-end" colspan="6">PortalRH</td>
-								<td><span class="text-success">@{{ bancoHoras.credito }}</span> <span class="text-danger">@{{ bancoHoras.debito }}</span></td>
+								<td><span class="text-success">@{{ frequencia.credito }}</span> <span class="text-danger">@{{ frequencia.debito }}</span></td>
 							</tr>
 						</table>
 					</div>
