@@ -1,8 +1,0 @@
-id;action_id;texto;url;route_name;ordem;created_at;updated_at;deleted_at
-0a30ba59-885c-4d42-ac35-c5d003f99baa;1e1c9444-ed16-4bc6-83b1-1ef7efb374b3;Pontos;/jobs/pontos;jobs.pontos.index;2;;;
-1e1c9444-ed16-4bc6-83b1-1ef7efb374b3;;Jobs;#;;3;;;
-55787911-c89c-4e18-9e4a-60f3cce2a452;;Home;/home;home;1;;;
-7715b473-6582-40d9-9f20-b802561616e7;1e1c9444-ed16-4bc6-83b1-1ef7efb374b3;Contracheques;/jobs/contracheques;jobs.contracheques.index;3;;;
-79449d01-3d2f-41d8-8862-38a05b774b2f;;Logout;/logout;auth.logout;2;;;
-b1c18e95-4a72-48d9-8dac-4b79da594599;1e1c9444-ed16-4bc6-83b1-1ef7efb374b3;Dashboard;/jobs/dashboard;jobs.dashboard.index;1;;;
-f64601a8-6c27-43a7-9752-b46d62d47827;1e1c9444-ed16-4bc6-83b1-1ef7efb374b3;Ferias;/jobs/ferias;jobs.ferias.index;4;;;
