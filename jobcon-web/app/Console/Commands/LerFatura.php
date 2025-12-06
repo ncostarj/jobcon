@@ -27,7 +27,7 @@ class LerFatura extends Command
     public function handle()
     {
         //
-        $file = fopen(storage_path('financeiro/itau/faturas/fatura-20251109.csv'), 'r');
+        $file = fopen(storage_path('financeiro/itau/faturas/csv/fatura-20251109.csv'), 'r');
         $contador = 0;
         $header = [];
         // dd($this->arquivo);
