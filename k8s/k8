@@ -1,0 +1,148 @@
+#!/bin/bash
+
+# declare -a projetos # declarando array
+
+data=$(date +"%Y-%m-%d")
+usuario=$(whoami)
+
+# função de ajuda comum para exibir como utilizar o comando propriamente
+function help() {
+    echo "Bem vindo $usuario"
+    echo "Modo de utilização do comando:";
+    echo "k8 [opcoes]"
+    echo "  -a|--apply [nome_arquivo] publicar o manifesto"
+    echo "  -p|-pods verifica os pods"
+    echo "  -s|-services verifica os services"
+    echo "  -d|-deploys verifica os deploys"
+    echo "  -pv|-persistentvolumes verifica os persistent volumes"
+    echo "  -pvc|persistentevolumeclaims verifica os persistent volume claims"
+    echo "  -i|--init start minukube"
+	exit 0
+}
+
+function apply() {
+    echo "Aplicando o manifesto do arquivo $2"
+    if [[ -n "$2" ]]; then
+        kubectl apply -f $2
+    fi
+}
+
+function remove() {
+    kubectl delete deploy 
+    kubectl delete svc
+    kubectl delete persistentvolumeclaim 
+    kubectl delete persistentvolume
+}
+
+function pod() {
+    echo "Verificando os pods"
+    kubectl get pods
+}
+
+function service() {
+    echo "Verificando os services"
+    kubectl get svc
+}
+
+function deploy() {
+    echo "Verificando os deploys"
+    kubectl get deploy
+}
+
+function persistentVolume() {
+    echo "Verificando os persistentVolumes"
+    kubectl get pv
+}
+
+function persistentVolumeClaim() {
+    echo "Verificando os persistent volume claim"
+    kubectl get pvc
+}
+
+function minikubeDashboard() {
+    echo "Iniciando minikube dashboard"
+    minikube dashboard
+}
+
+function minikubeStart() {
+    echo "Iniciando o minikube"
+    minikube start
+}
+
+function minikubeStatus() {
+    echo "Verificando o status do minikube"
+    minikube status
+}
+
+function minikubeStop() {
+    echo "Parando o minikube"
+    minikube stop
+}
+
+# função principal do script
+function main() {
+    
+    if [[ -z "$1" ]]; then
+        help
+    fi
+
+    case "$1" in
+        -a|--apply)
+            apply $@
+            shift
+            exit 0
+            ;;                                                                      
+        -p|--pods)
+            pod
+            shift
+            exit 0
+            ;;            
+        -s|--services)
+            service
+            shift
+            exit 0
+            ;;            
+        -d|--deploys)
+            deploy
+            shift
+            exit 0
+            ;;
+        -pv|--persistentvolumes)
+            persistentVolume
+            shift
+            exit 0
+            ;;            
+        -pvc|--persistentvolumeclaims)
+            persistentVolumeClaim
+            shift
+            exit 0
+            ;;
+        -dashmk|--minikube-start)
+            minikubeDashboard
+            shift
+            exit 0
+            ;;
+        -startmk|--minikube-start)
+            minikubeStart
+            shift
+            exit 0
+            ;;
+        -statusmk|--minikube-status)
+            minikubeStatus
+            shift
+            exit 0
+            ;;            
+        -stopmk|--minikube-stop)
+            minikubeStop
+            shift
+            exit 0
+            ;;
+        -h|--help|*)
+            help
+            shift
+            exit 0
+            ;;
+    esac
+}
+
+main $@
