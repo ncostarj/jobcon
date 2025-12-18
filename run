@@ -6,4 +6,4 @@
     sonarsource/sonar-scanner-cli -X \
     -Dsonar.projectKey=jobcon \
     -Dsonar.host.url=http://localhost:9000 \
-    -Dsonar.token=sqp_dbc9bce91b6999d566deabf58691301f03b700de 
+    -Dsonar.token=sqp_0d8d182c5eda36ffb3c9fe7ebacabcc17c7327de 
