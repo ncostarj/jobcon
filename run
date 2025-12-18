@@ -1,0 +1,9 @@
+ docker container run \
+    --rm \
+    --network=host \
+    -e SONAR_HOST_URL="http://localhost:9000" \
+    -v ".:/usr/src" \
+    sonarsource/sonar-scanner-cli -X \
+    -Dsonar.projectKey=jobcon \
+    -Dsonar.host.url=http://localhost:9000 \
+    -Dsonar.token=sqp_dbc9bce91b6999d566deabf58691301f03b700de 
