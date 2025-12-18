@@ -1,0 +1,15 @@
+version: '3'
+services:
+  rpa:
+    build: .
+    container_name: jobcon-mobile
+    ports:
+      - 8100:8100
+    volumes:
+      - .:/var/www/html/jobcon-mobile
+    restart: unless-stopped
+    # command:  npm start --prefix api
+    networks:
+      lan:
+networks:
+  lan:
