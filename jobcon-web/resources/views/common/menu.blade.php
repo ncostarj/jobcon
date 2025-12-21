@@ -9,46 +9,46 @@
 	<div class="bg-dark p-4">
 
 		<div>
-			{{ auth()->user()->name }}<br />
+			<p>
+				Olá, {{ auth()->user()->name }}<br />
+				Perfis: {{ auth()->user()->user_role_names }}<br/>
+			</p>
 
-			@foreach(auth()->user()->roles as $role)
+			@foreach(auth()->user()->roles_actions as $key => $action)
 
-			{{ $role->nome }}<br />
+				@if($action->subactions->isEmpty())
+					<a href="{{ route($action->route_name) }}">{{ $action->texto }}</a>
+				@endif
 
-			@foreach($role->actions as $key => $action)
-
-			@if($action->subactions->isEmpty())
-				<a href="{{ route($action->route_name) }}">{{ $action->texto }}</a>
-			@endif
-
-			<br/>
-
-			@if(!$action->subactions->isEmpty())
-			<div class="accordion" id="accordionExample">
-				<div class="accordion-item">
-					<h2 class="accordion-header">
-						<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$key}}" aria-expanded="true" aria-controls="collapse{{$key}}">
-							{{ $action->texto }}
-						</button>
-					</h2>
-					<div id="collapse{{$key}}" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-						<div class="accordion-body">
+				<br />
 
 
-							<ul class="list-group">
-								@foreach($action->subactions as $subaction)
-								<li class="list-group-item"><a href="{{ route($subaction->route_name) }}">{{ $subaction->texto }}</a></li>
-								@endforeach
-							</ul>
+				@if(!$action->subactions->isEmpty())
+				<div class="accordion" id="accordionExample">
+					<div class="accordion-item">
+						<h2 class="accordion-header">
+							<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$key}}" aria-expanded="true" aria-controls="collapse{{$key}}">
+								{{ $action->texto }}
+							</button>
+						</h2>
+						<div id="collapse{{$key}}" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+							<div class="accordion-body">
 
 
+								<ul class="list-group">
+									@foreach($action->subactions as $subaction)
+									<li class="list-group-item"><a href="{{ route($subaction->route_name) }}">{{ $subaction->texto }}</a></li>
+									@endforeach
+								</ul>
+
+
+							</div>
 						</div>
 					</div>
-				</div>
 
-			</div>
-			@endif
-			@endforeach
+				</div>
+				@endif
+
 			@endforeach
 
 		</div>
