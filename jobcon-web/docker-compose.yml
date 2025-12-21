@@ -22,7 +22,7 @@ services:
       context: .
       dockerfile: ./docker/config/php/82/Dockerfile
     container_name: appserver
-    working_dir: /var/www/newton/jobcon
+    working_dir: /var/www/html/jobcon-web
     volumes:
       - ./docker/config/php/php.ini:/usr/local/etc/php/php.ini
       - .:/var/www/html/jobcon-web

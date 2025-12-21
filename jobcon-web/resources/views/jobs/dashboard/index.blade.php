@@ -96,7 +96,6 @@
 
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.17/locales-all.global.min.js'></script>
-
 <script type="text/javascript">
 	let usuario = JSON.parse('@json($dados->usuario)');
 	let projeto = JSON.parse('@json($dados->projeto)');
@@ -238,7 +237,10 @@
 				ordenacao: ''
 			},
 			listaPontos: [],
-			frequencia: {},
+			frequencia: {
+				credito:0,
+				debito:0
+			},
 			resumos: [],
 			subtotalPontos: {
 				debito: '00:00',
@@ -369,7 +371,8 @@
 				this.gateway
 					.get(`{{ route('api.v1.jobs.frequencias.listarUltimoSaldo') }}?usuario_id=${this.pontoAssignForm.usuarioId}`)
 					.then((response) => {
-						this.frequencia = response.data.frequencia;
+						this.frequencia.credito = response.data.frequencia.credito??0;
+						this.frequencia.deito = response.data.frequencia.debito??0;
 					})
 					.catch(error => {
 						console.error(error);
@@ -387,7 +390,6 @@
 				this.gateway
 					.get(`{{ route('api.v1.jobs.pontos.resumo') }}?mes=${month}&ano=${year}&usuario_id=${this.pontoAssignForm.usuarioId}`)
 					.then((response) => {
-						console.log(response);
 						this.resumos = response.data;
 					})
 					.catch(error => {
@@ -770,7 +772,6 @@
 				this.gateway
 					.get(`{{ route('api.v1.jobs.ferias.listar') }}?usuario_id=${this.usuarioId}&limite=3`)
 					.then((response) => {
-						console.log(response)
 						this.listaFerias = response.data;
 						this.feriasLoading = false;
 					}).catch(error => {
@@ -988,11 +989,11 @@
 							</tr>
 							<tr>
 								<td class="text-end" colspan="6">Subtotal:</td>
-								<td ><span class="text-success"><strong>@{{ subtotalPontos.credito }}</strong></span> <span class="text-danger"><strong>@{{ subtotalPontos.debito }}</strong></span></td>
+								<td><span class="text-success"><strong>@{{ subtotalPontos.credito }}</strong></span> <span class="text-danger"><strong>@{{ subtotalPontos.debito }}</strong></span></td>
 							</tr>
 							<tr>
 								<td class="text-end" colspan="6">PortalRH</td>
-								<td><span class="text-success">@{{ frequencia.credito }}</span> <span class="text-danger">@{{ frequencia.debito }}</span></td>
+								<td><span class="text-success">@{{ frequencia.credito }}</span> <span class="text-danger">@{{ frequencia.debito??0 }}</span></td>
 							</tr>
 						</table>
 					</div>
@@ -1137,7 +1138,7 @@
 							</td>
 						</tr>
 						<tr v-if="listaTarefas.length == 0">
-							<td colspan="6">Nenhum tarefa encontrada</td>
+							<td colspan="7">Nenhum tarefa encontrada</td>
 						</tr>
 					</table>
 				</div>

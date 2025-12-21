@@ -9,15 +9,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Role extends Model
 {
-    use Uuid, HasFactory, SoftDeletes;
+	use Uuid, HasFactory, SoftDeletes;
 
-    protected $table = 'roles';
+	protected $table = 'roles';
 
-    protected $fillable = [
-        'nome'
-    ];
+	protected $fillable = [
+		'nome'
+	];
 
-    public function actions() {
-        return $this->belongsToMany(Action::class)->whereNull('actions.action_id')->orderBy('ordem', 'asc');
-    }
+	public function actions()
+	{
+		return $this->belongsToMany(Action::class)
+			->whereNull('actions.action_id')
+			->orderBy('ordem', 'asc');
+	}
 }
