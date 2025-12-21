@@ -13,44 +13,56 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Uuid, HasApiTokens, HasFactory, Notifiable;
+	use Uuid, HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',
+	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array<int, string>
+	 */
+	protected $fillable = [
+		'name',
 		'email_comercial',
-        'email',
-        'password',
-    ];
+		'email',
+		'password',
+	];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+	/**
+	 * The attributes that should be hidden for serialization.
+	 *
+	 * @var array<int, string>
+	 */
+	protected $hidden = [
+		'password',
+		'remember_token',
+	];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+	/**
+	 * The attributes that should be cast.
+	 *
+	 * @var array<string, string>
+	 */
+	protected $casts = [
+		'email_verified_at' => 'datetime',
+	];
 
-    public function roles() {
-        return $this->belongsToMany(Role::class)->orderBy('nome', 'asc');
-    }
+	public function roles()
+	{
+		return $this->belongsToMany(Role::class)->orderBy('nome', 'asc');
+	}
 
-	public function pontos() {
+	public function pontos()
+	{
 		return $this->hasMany(Ponto::class, 'user_id');
+	}
+
+	public function getUserRoleNamesAttribute($value)
+	{
+		return $this->roles->implode('nome', ', ');
+	}
+
+	public function getRolesActionsAttribute($value)
+	{
+		return $this->roles->flatMap->actions->unique('id')->values();
 	}
 }

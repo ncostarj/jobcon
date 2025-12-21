@@ -38,6 +38,41 @@ class TestScript extends Command
 	 */
 	public function handle()
 	{
+		// $password = "12312323";
+
+		$arquivo = fopen(storage_path('files/octo.sql'), 'r');
+
+		$contador = 0;
+		$linhas = [];
+		$linhaTratada = '';
+		$tabelas = '';
+		while ($row = fgets($arquivo, 1000)) {
+
+			if (str_contains($row, 'DROP')) {
+
+				// if (str_contains($row, 'relatorios_3040_fundos_externos')) {
+				// 	dd($row);
+				// }
+
+				$linhaTratada = preg_replace('/DROP TABLE IF EXISTS `([a-z_0-9]+)`;$/', '$1$2', $row);
+			}
+
+			if (str_contains($row, 'cnpj')) {
+				$match = [];
+				preg_match('/_index/', $row, $match);
+				if(!empty($match)){continue;}
+				$linhaTratada = rtrim($linhaTratada, "\n");
+				$campo = ltrim($row);
+				$tabelas .= "Tabela {$linhaTratada} - {$campo}";
+			}
+
+			$contador++;
+		}
+
+		$arquivo2 = fopen(storage_path('files/campos.txt'),'w');
+		fwrite($arquivo2, $tabelas);
+		fclose($arquivo2);
+
 		return "0";
 	}
 }

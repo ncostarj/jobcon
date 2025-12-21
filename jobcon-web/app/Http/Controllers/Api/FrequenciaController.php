@@ -10,7 +10,8 @@ class FrequenciaController extends BaseApiController
 {
 	public function indexUltimoSaldo(FrequenciaService $frequenciaService, Request $request) {
 		try {
-			$response = $this->response(200, trans('api.200'), [ 'frequencia' => $frequenciaService->getLastSaldo($request->all()) ]);
+			$ultimoSaldo = $frequenciaService->getLastSaldo($request->all());
+			$response = $this->response(200, trans('api.200'), [ 'frequencia' => !empty($ultimoSaldo) ? $ultimoSaldo : [ 'credito' => 0, 'debito' => 0 ] ]);
 		} catch (\Throwable $th) {
 			$this->log($th);
 			$response = $this->response(500, trans('api.500'));
