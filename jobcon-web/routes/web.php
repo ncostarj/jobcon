@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\ContrachequeController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\FeriasController;
-use App\Http\Controllers\PontoController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\SpotifyController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TarefaController;
+use App\Http\Controllers\PontoController;
+use App\Http\Controllers\FeriasController;
+use App\Http\Controllers\ContrachequeController;
+use App\Http\Controllers\SpotifyController;
 
 /*
 |--------------------------------------------------------------------------

@@ -4,17 +4,14 @@ services:
     container_name: webserver
     hostname: jobcon.homelab
     working_dir: /var/www/html/jobcon-web
-    ports:
-      - "8083:80"
     volumes:
       - .:/var/www/html/jobcon-web
-      - ./docker/config/nginx/sites-available:/etc/nginx/sites-available
-      - ./docker/config/nginx/sites-enabled:/etc/nginx/sites-enabled
-      - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/config/nginx/conf.d:/etc/nginx/conf.d
     depends_on:
       - appserver
     restart: unless-stopped
     networks:
+      - oldjobcon
       - homelab
 
   appserver:
@@ -31,9 +28,11 @@ services:
       - APP_DEBUG=true
     restart: unless-stopped
     networks:
+      - oldjobcon
       - homelab
 
 networks:
+  oldjobcon:
   homelab:
     external: true
     name: homelab_lan
