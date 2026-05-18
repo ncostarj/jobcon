@@ -36,7 +36,7 @@ class PontoController extends Controller implements ControllerInterface
 
 		$usuario_id = auth()->user()->id;
 		$request->merge(compact('usuario_id'));
-		$pontos = $this->pontoService->search($request);
+		$pontos = $this->pontoService->searchPaginated($request);
 
 		return view('jobs.pontos.index', compact('pontos', 'icons'));
 	}

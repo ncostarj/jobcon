@@ -20,8 +20,8 @@
 
     <body class="" data-bs-theme="dark">
 		<div class="container-fluid">
-			<div class="row">
-				<div class="col-3 mt-5 offset-4">
+			<div class="row box-login">
+				<div class="col-sm-4 col-md-4 offset-md-4">
 					@yield('content')
 				</div>
 			</div>

@@ -28,6 +28,18 @@ class PontoRepository implements RepositoryInterface
 			->get();
 	}
 
+	public function searchPaginated(array $criteria)
+	{
+		return $this->model
+			->with(['usuario', 'horarios'])
+			->where('user_id', $criteria['usuario_id'])
+			->when($criteria['dia'] ?? false, fn($query, $dia) => $query->where('dia', $dia))
+			->when($criteria['mes'] ?? false, fn($query, $mes) => $query->whereRaw('MONTH(dia) = ?', [$mes]))
+			->when($criteria['ano'] ?? false, fn($query, $ano) => $query->whereRaw('YEAR(dia) = ?', [$ano]))
+			->orderBy('dia', $criteria['ordem'] ?? 'desc')
+			->paginate(15);
+	}
+
 	public function find(string $id): ?Ponto
 	{
 		return $this->model->findOrFail($id);

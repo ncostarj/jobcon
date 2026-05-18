@@ -34,21 +34,25 @@
 				<td>{{ $ponto->dia->format('d/m/Y') }}</td>
 				<td><i class="{{ $icons[$ponto->categoria]??'' }}"></i></td>
 				<td>{{ $ponto->pedir_ajuste ? 'sim':'não' }}</td>
-				<td>{{ $ponto->entrada->hora??'-' }}</td>
-				<td>{{ $ponto->almoco_saida->hora??'-' }}</td>
-				<td>{{ $ponto->almoco_retorno->hora??'-' }}</td>
-				<td>{{ $ponto->saida->hora??'-' }}</td>
+				<td>{{ $ponto->entrada->horaFormatted??'-' }}</td>
+				<td>{{ $ponto->almoco_saida->horaFormatted??'-' }}</td>
+				<td>{{ $ponto->almoco_retorno->horaFormatted??'-' }}</td>
+				<td>{{ $ponto->saida->hora->horaFormatted??'-' }}</td>
 				<td>{{ $ponto->observacao ?? '-' }}</td>
 				<td>
 					<a href="{{ route('jobs.pontos.edit', [ 'id' => $ponto->id ]) }}">Editar</a>
 					<a href="">Apagar</a>
 				</td>
 			</tr>
+
 			@empty
 			<tr>
 				<td colspan="5">Nenhum registro encontrado.</td>
-			</tr>
+			</tr>			
 			@endforelse
+			<tr>
+				<td colspan="5">{{ $pontos->links('pagination::bootstrap-5') }}</td>
+			</tr>			
 		</table>
 	</div>
 </div>

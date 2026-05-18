@@ -35,7 +35,11 @@
 </div>
 <div class="row" id="horarioApp">
 	<div class="col-12">
+		@if(isset($ponto))
 		<form action="{{ route('jobs.pontos.update', [ 'id' => $ponto->id ]) }}" method="post">
+		@else
+		<form action="{{ route('jobs.pontos.create') }}" method="post">
+		@endif
 			@method('PUT')
 			@csrf
 			<div class="row">

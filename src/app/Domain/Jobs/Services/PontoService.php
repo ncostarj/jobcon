@@ -30,6 +30,11 @@ class PontoService implements ServiceInterface
 		return $this->pontoRepository->search($request->all());
 	}
 
+	public function searchPaginated(Request $request)
+	{
+		return $this->pontoRepository->searchPaginated($request->all());
+	}
+
 	public function find(string $id): ?Ponto
 	{
 		return $this->pontoRepository->find($id);

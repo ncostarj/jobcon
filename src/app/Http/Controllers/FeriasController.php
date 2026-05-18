@@ -33,7 +33,7 @@ class FeriasController extends Controller
 	{
 		$usuario_id = auth()->user()->id;
 		$ferias = $feriasService->find($id);
-		$action = route('jobs.ferias.update', ['ferias' => $ferias->id]);
+		$action = route('jobs.ferias.update', ['id' => $ferias->id]);
 		return view('jobs.ferias.form', compact('ferias', 'action', 'usuario_id'));
 	}
 

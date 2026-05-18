@@ -8,9 +8,9 @@
 		cursor: pointer;
 	}
 
-	.suave {
+	/* .suave {
 		font-size: 0.9vw;
-	}
+	} */
 
 	.dia {
 		font-size: 8vw;
@@ -401,7 +401,9 @@
 		created: function() {
 			let hoje = new Date()
 			let mesAtual = hoje.getMonth() + 1;
+			mesAtual = mesAtual < 10 ? `0${mesAtual}`: mesAtual;
 			let anoAtual = hoje.getFullYear();
+			console.log(`${anoAtual}-${mesAtual}`);
 			this.pontoSearchForm.mes = `${anoAtual}-${mesAtual}`;
 			this.pontoSearchForm.ordenacao = 'desc';
 			this.obterFrequencia();
@@ -783,6 +785,7 @@
 				this.gateway
 					.get(`{{ route('api.v1.jobs.ferias.verificar') }}?usuario_id=${this.usuarioId}`)
 					.then((response) => {
+					console.log(response);
 						this.ultimasFeriasAgendadas = response.data;
 					});
 			}
@@ -790,7 +793,7 @@
 		computed: {},
 		created: function() {
 			this.listar();
-			// this.verificarFerias();
+			this.verificarFerias();
 		},
 	});
 </script>
@@ -815,9 +818,9 @@
 		</div>
 	</div>
 </div>
-<div class="row mt-2">
+<div class="row d-none mt-2">
 	<div class="col">
-		<div class="card d-none">
+		<div class="card">
 			<div class="card-body">
 				<h1 class="card-title">
 					<i class="bi bi-calendar3"></i> Agenda
@@ -886,10 +889,8 @@
 						<!-- <a href="#" title="Subir horas portal rh"><i class="bi bi-search fs-4"></i></a> -->
 					</div>
 				</div>
-
 				<div class="row">
-
-					<div class="col-3">
+					<div class="col-12 col-md-4 col-lg-3">
 						<h1>@{{ calendario.hoje.mes }} tem</h1>
 						<ul class="list-group mb-5">
 							<li class="list-group-item">@{{ calendario.qtdDiasMes }} dias corridos</li>
@@ -934,9 +935,8 @@
 						</ul>
 					</div>
 
-					<div class="col-9">
+					<div class="col-12 col-md-8 col-lg-9">
 						<table class="table table-responsive suave">
-
 							<tr class="sticky-top">
 								<th></th>
 								<th></th>
@@ -999,7 +999,6 @@
 					</div>
 
 				</div>
-
 			</div>
 		</div>
 	</div>
@@ -1148,7 +1147,7 @@
 </div>
 <div class="row mt-4">
 
-	<div class="col">
+	<div class="col col-md-4 col-lg-6">
 		<div class="card" id="contracheques-app">
 			<div class="card-body">
 				<h1 class="card-title"><i class="bi bi-receipt"></i> Contracheques</h1>
@@ -1173,7 +1172,7 @@
 					</div>
 				</div>
 
-				<table class="table table-responsive suave">
+				<table class="table table-responsive">
 					<tr>
 						<th><i class=" fs-5" :class="[ isEsconder ? 'bi bi-eye-slash' : 'bi bi-eye' ]" @click="toggleVisualizacao()"></i></th>
 						<th>Competência</th>
@@ -1227,7 +1226,7 @@
 
 	</div>
 
-	<div class="col">
+	<div class="col col-md-4 col-lg-6">
 
 		<div class="card" id="ferias-app">
 			<div class="card-body">
@@ -1294,5 +1293,5 @@
 		</div>
 
 	</div>
-
-	@endsection
+</div>
+@endsection

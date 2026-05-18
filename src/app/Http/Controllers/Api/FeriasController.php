@@ -77,8 +77,14 @@ class FeriasController extends BaseApiController
 		return $response;
 	}
 
-	public function verifyDiasAteFerias(Request $request)
+	public function verifyDiasAteFerias(FeriasService $feriasService, Request $request)
 	{
-		logger($request->all());
+		try {
+			$response = $this->response(200, trans('api.200'), $feriasService->verifyDiasAteFerias($request->all()));
+		} catch (\Throwable $th) {
+			$this->log($th);
+			$response = $this->response(500, trans('api.500'));
+		}
+		return $response;
 	}
 }

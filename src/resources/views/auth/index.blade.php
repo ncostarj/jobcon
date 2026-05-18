@@ -20,7 +20,7 @@
 	<div class="row mt-2">
 		<div class="col">
 			<div class="form-floating mb-3">
-				<input type="text" id="email" name="email"  class="form-control"/>
+				<input type="text" id="email" name="email" placeholder="Email"  class="form-control"/>
 				<label for="email">E-mail</label>
 			</div>
 		</div>
@@ -28,7 +28,7 @@
 	<div class="row">
 		<div class="col">
 			<div class="form-floating mb-3">
-				<input type="password" id="password" name="password"  class="form-control"/>
+				<input type="password" id="password" name="password" placeholder="Senha"  class="form-control"/>
 				<label for="password">Senha</label>
 			</div>
 		</div>

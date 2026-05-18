@@ -6,6 +6,7 @@ use App\Domain\Jobs\Contracts\ServiceInterface;
 use App\Domain\Jobs\DTOs\FeriasDTO;
 use App\Domain\Jobs\Models\Ferias;
 use App\Domain\Jobs\Repositories\FeriasRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -50,23 +51,20 @@ class FeriasService implements ServiceInterface
 
 	public function verifyDiasAteFerias(array $data)
 	{
-		// $retorno = null;
-		// $hoje = Carbon::parse(date('Y-m-d'));
-		// $ultimaFeriasAgendada = $this->repository->getUltimaFeriasAgenda($data);
-		// $inicio = !empty($ultimaFeriasAgendada) ? $ultimaFeriasAgendada->inicio->format('Y-m-d') : '';
+		$retorno = null;
+		$ultimaFeriasAgendada = $this->feriasRepository->getUltimaFeriasAgenda($data);
+		$hoje = Carbon::today();
 
-		// if(!empty($ultimaFeriasAgendada) && ($ultimaFeriasAgendada->ativo || $inicio > $hoje->format('Y-m-d'))) {
-		// 	$dataInicio = Carbon::parse($ultimaFeriasAgendada->inicio);
-		// 	$dataFim = Carbon::parse($ultimaFeriasAgendada->fim);
-		// 	$diferencaEmDiasInicio = $dataInicio->diffInDays($hoje);
-		// 	$diferencaEmDiasRetorno = $hoje->diffInDays($dataFim);
-		// 	$retorno = [
-		// 		'diasAteFerias' => $diferencaEmDiasInicio,
-		// 		'diasAteRetorno' => $diferencaEmDiasRetorno,
-		// 		'ativo' => $ultimaFeriasAgendada->ativo==1
-		// 	];
-		// }
-
-		// return $this->defaultReponse(200, 'Dados retornados com sucesso.', $retorno);
+		if(!empty($ultimaFeriasAgendada) && ($ultimaFeriasAgendada->ativo || $ultimaFeriasAgendada->inicio->greaterThan($hoje))) {
+			$diferencaEmDiasInicio = $hoje->diffInDays($ultimaFeriasAgendada->inicio);
+			$diferencaEmDiasRetorno = $hoje->diffInDays($ultimaFeriasAgendada->fim);
+			$retorno = [
+				'diasAteFerias' => $diferencaEmDiasInicio,
+				'diasAteRetorno' => $diferencaEmDiasRetorno,
+				'ativo' => $ultimaFeriasAgendada->ativo==1
+			];
+		}
+		
+		return $retorno;
 	}
 }

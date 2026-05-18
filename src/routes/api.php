@@ -35,7 +35,6 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 			Route::name('verificar')->get('verificar', [ FeriasController::class, 'verifyDiasAteFerias' ]);
 		});
 
-
 		Route::prefix('calendario')->name('calendario.')->group(function () {
 
 			Route::name('index')->get('/', [CalendarioController::class, 'index']);
