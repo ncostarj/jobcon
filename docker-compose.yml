@@ -1,7 +1,7 @@
 services:
-  jobcon_app:
-    image: homelab/php:8.2
-    container_name: jobcon_app
+  jobcon-php:
+    image: homelab/php:8.2-fpm
+    container_name: jobcon-php
     working_dir: /var/www/html/jobcon
     volumes:
       - ./src:/var/www/html/jobcon
@@ -9,15 +9,15 @@ services:
     networks:
       - proxy
       - internal
-  jobcon_nginx:
+  jobcon-nginx:
     image: nginx:alpine
-    container_name: jobcon_nginx
+    container_name: jobcon-nginx
     working_dir: /var/www/html/jobcon
     volumes:
       - ./docker/config/nginx/conf.d:/etc/nginx/conf.d
       - ./src:/var/www/html/jobcon
     depends_on:
-      - jobcon_app
+      - jobcon-php
     restart: unless-stopped
     networks:
       - proxy
