@@ -1,6 +1,6 @@
 services:
   jobcon-nginx:
-    image: nginx:latest
+    image: nginx:alpine
     container_name: jobcon-nginx
     volumes:
       - ./src:/var/www/html/jobcon
