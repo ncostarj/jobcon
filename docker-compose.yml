@@ -1,47 +1,30 @@
 services:
-  jobcon_ws:
+  jobcon-nginx:
     image: nginx:latest
-    container_name: jobcon_ws
-    working_dir: /var/www/html/jobcon/src
+    container_name: jobcon-nginx
     volumes:
-      - "./docker/config/nginx/conf.d:/etc/nginx/conf.d"
-      - .:/var/www/html/jobcon
+      - ./src:/var/www/html/jobcon
+      - "./config/conf.d:/etc/nginx/conf.d"
     depends_on:
-      - jobcon_aps
+      - jobcon-php
     restart: unless-stopped
     networks:
-      - jobcon
-      - homelab
-  jobcon_aps:
-    build: 
-      context: .
-      dockerfile: ./docker/config/php/82/Dockerfile
-    container_name: jobcon_aps
-    working_dir: /var/www/html/jobcon/src
+      - harbor-gateway
+  jobcon-php:
+    image: harbor/php:8.2-fpm
+    container_name: jobcon-php
+    working_dir: /var/www/html/jobcon
     volumes:
-      - ./docker/config/php/php.ini:/usr/local/etc/php/php.ini
-      - .:/var/www/html/jobcon
+      - ./src:/var/www/html/jobcon
+      - ~/.ssh:/home/harbor/.ssh:ro
     restart: unless-stopped
     networks:
-      - jobcon
-      - homelabjobcon_dbs:
-    image: mysql:latest
-    container_name: jobcon_dbs
-    ports:
-      - ${DATABASE_SERVER_PORT}:3306
-    volumes:
-      - ./docker/volumes/mysqldata:/var/lib/mysql
-      - ./docker/dumps:/var/www/dumps
-    environment:
-      - MYSQL_ROOT_PASSWORD=${DATABASE_SERVER_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${DATABASE_SERVER_DATABASE}
-      - MYSQL_USER=${DATABASE_SERVER_USER}
-      - MYSQL_PASSWORD=${DATABASE_SERVER_PASSWORD}
-    restart: unless-stopped
-    networks:
-      - jobcon
+      harbor-gateway:
+        aliases: 
+          - jobcon.localhost
+      harbor-data:
 networks:
-  jobcon:
-  homelab:
+  harbor-gateway:
     external: true
-    name: homelab_lan
+  harbor-data:
+    external: true
